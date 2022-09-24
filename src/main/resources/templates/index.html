@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+            integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+            crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+            integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+            crossorigin="anonymous"></script>
+    <script src="https://use.fontawesome.com/releases/v5.2.0/js/all.js"></script>
+    <title>Title</title>
+</head>
+<style>
+    body {
+        background-color: lightskyblue;
+    }
+    .table {
+        width: 80%;
+        max-width: 800px;
+        margin: auto;
+        table-layout: fixed;
+    }
+
+    .table th {
+        border-top-style: none;
+    }
+
+    td {
+        background-color: white;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        /*white-space: nowrap;*/
+    }
+
+    td > a, a:visited, a:hover, a:active {
+        color: black;
+    }
+
+    thead:first-child tr:first-child th:first-child {
+        border-radius: 10px 0 0 0;
+    }
+
+    thead:first-child tr:first-child th:last-child {
+        border-radius: 0 10px 0 0;
+    }
+
+    tbody:last-child tr:last-child td:first-child {
+        border-radius: 0 0 0 10px;
+    }
+
+    tbody:last-child tr:last-child td:last-child {
+        border-radius: 0 0 10px 0;
+    }
+    .search-box {
+        width: 70%;
+        margin: 50px auto;
+        margin-bottom : 10px;
+        max-width: 500px;
+    }
+    #input-word {
+        width : 400px;
+    }
+    .form-select {
+        margin-bottom : 30px;
+        margin-left : 545px;
+
+        width : 100px;
+
+    }
+    #header {
+        text-align: center;
+    }
+    .image {
+        width: 100%;
+        height: 150px;
+        border-radius: 10px;
+    }
+</style>
+<script>
+    // getAll();
+    // function getAll() {
+    //     $.ajax({
+    //         type:'GET',
+    //         url:'/',
+    //         success: function(response) {
+    //             $('#tbody-box').empty();
+    //             for (let i = 0; i < response.length; i++) {
+    //                 let item = response[i];
+    //                 let tempHtml = addHTML(item);
+    //                 $('#tbody-box').append(tempHtml);
+    //             }
+    //         }
+    //     })
+    // }
+
+    function execSearch() {
+        let keyword = $('#input-word').val();
+        console.log(keyword);
+        if (keyword == '') {
+            alert('검색어를 입력해주세요');
+            $('#input-word').focus();
+            return;
+        }
+
+        $.ajax({
+            type: 'GET',
+            url: `/search?keyword=${keyword}`,
+            success: function (response) {
+                $('#tbody-box').empty();
+                console.log("success 작동하니?");
+                console.log(response); // 찍힘
+                console.log(response.length);
+                for (let i = 0; i < response.length; i++) {
+
+                    let item = response[i];
+                    console.log(item); // 안찍힘
+                    let tempHtml = addHTML(item);
+                    $('#tbody-box').append(tempHtml);
+                }
+            }
+        })
+    }
+
+    function addHTML(item) {
+        return `<tr class="word-word">
+                <td><img class="image" src="${item.image}"></td>
+                <td><a href="${item.detailUrl}">${item.word}</a></td>
+                <td>${item.content}</td>
+            </tr>`
+    }
+</script>
+<body>
+
+<header id="header">
+    <img src="#">
+</header>
+
+<div>
+    <div class="search-box d-flex justify-content-center">
+        <input id="input-word" class="form-control" style="margin-right: 0.5rem">
+        <button class="btn btn-light" onclick="execSearch()"><i class="fa fa-search"></i></button>
+    </div>
+    <select class="form-select" aria-label="Default select example">
+        <option selected>ALL</option>
+        <option value="1">Dictionary</option>
+        <option value="2">Term</option>
+    </select>
+</div>
+
+<table class="table">
+    <thead class="thead-light">
+    <tr>
+        <th scope="col">IMAGE</th>
+        <th scope="col" style="width:30%">WORD</th>
+        <th scope="col">MEANING</th>
+
+    </tr>
+    </thead>
+    <tbody id="tbody-box">
+        <tr class="word-word">
+            <td><img class="image" src="data:image/jpeg;base64,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"></td>
+            <td><a href="#">진구!</a></td>
+            <td>a single distinct meaningful element of speech or writing, used with others (or
+                sometimes
+                alone) to form a sentence and typically shown with a space on either side when written
+                or
+                printed.
+            </td>
+        </tr>
+        <tr class="word-word">
+            <td><img class="image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRILAevTjTaM2KwU1ojU3UPvesg6ANFoI9J-A&usqp=CAU"></td>
+            <td><a href="https://www.naver.com">짱구우!</a></td>
+            <td>a single distinct meaningful element of speech or writing, used with others (or
+                sometimes
+                alone) to form a sentence and typically shown with a space on either side when written
+                or
+                printed.
+            </td>
+        </tr>
+    </tbody>
+</table>
+</body>
+</html>
