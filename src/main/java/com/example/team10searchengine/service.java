@@ -2,7 +2,8 @@ package com.example.team10searchengine;
 
 import com.example.team10searchengine.entity.kordict.KorDict;
 import com.example.team10searchengine.entity.kordict.KorDictRepository;
-import com.example.team10searchengine.entity.weke.Weke;
+import com.example.team10searchengine.entity.wiki.NaverWiki;
+import com.example.team10searchengine.entity.wiki.NaverWikiRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -17,16 +18,17 @@ import java.util.List;
 @Service
 public class service {
     private final KorDictRepository korDictRepository;
+    private final NaverWikiRepository naverWikiRepository;
 
-    public List<Weke> search(String keyword) {
-        if (keyword.equals("JJang")) {
-            Weke entity = new Weke("신짱구","https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRILAevTjTaM2KwU1ojU3UPvesg6ANFoI9J-A&usqp=CAU", "짱구!", "https://www.naver.com", "JJang");
-            List<Weke> entityList = new ArrayList<>();
-            entityList.add(entity);
-            return entityList;
-        }
-        return null;
-    }
+//    public List<NaverWiki> search(String keyword) {
+//        if (keyword.equals("JJang")) {
+////            Weke entity = new Weke("신짱구","https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRILAevTjTaM2KwU1ojU3UPvesg6ANFoI9J-A&usqp=CAU", "짱구!", "https://www.naver.com", "JJang");
+//            List<NaverWiki> entityList = new ArrayList<>();
+////            entityList.add(entity);
+//            return entityList;
+//        }
+//        return null;
+//    }
 
     @Transactional
     public Page<KorDict> getAll(int page, int size) {
@@ -36,5 +38,10 @@ public class service {
     @Transactional
     public List<KorDict> getKeyword(String keyword) {
         return korDictRepository.findByWordOrMeaning(keyword);
+    }
+
+    @Transactional
+    public List<NaverWiki> getWikiFromKeyword(String keyword) {
+        return naverWikiRepository.findByKeyword(keyword);
     }
 }
