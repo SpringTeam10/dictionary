@@ -1,20 +1,18 @@
 package com.example.team10searchengine.entity.kordict;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
+
+@NoArgsConstructor(access = AccessLevel.PUBLIC)
+@Data
 @Getter
-@Entity(name="dictionary")
+@Setter
+@Entity(name="woori_fountain")
 public class KorDict {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
     @Column
@@ -37,4 +35,17 @@ public class KorDict {
     private String proverb;
     @Column
     private String idiom;
+
+    public KorDict(String word, String type, String isUnique, String pronunciation, String part, String meaning, String example, String field, String proverb, String idiom) {
+        this.word = word;
+        this.type = type;
+        this.isUnique = isUnique;
+        this.pronunciation = pronunciation;
+        this.part = part;
+        this.meaning = meaning;
+        this.example = example;
+        this.field = field;
+        this.proverb = proverb;
+        this.idiom = idiom;
+    }
 }
