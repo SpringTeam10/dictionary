@@ -8,8 +8,11 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
-public interface KorDictRepository extends JpaRepository<KorDict,Long> {
+public interface KorDictRepository extends JpaRepository<KorDict,Long>, KorDictCustomRepository {
     Page<KorDict> findAll(Pageable pageable);
-    @Query("select d from dictionary d where d.word like %:word%")
-    List<KorDict> findByWordOrMeaning(@Param("word")String word);
+
+    /* like 사용 */
+//    @Query("select d from woori_fountain d where d.word like %:word%")
+    @Query(value = "SELECT * FROM woori_fountain WHERE MATCH (word) AGAINST (:word in boolean mode) order by word=:word desc, word asc",nativeQuery = true)
+    List<KorDict> findByWord(@Param("word")String word);
 }
