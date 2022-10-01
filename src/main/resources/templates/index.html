@@ -18,7 +18,7 @@
             integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
             crossorigin="anonymous"></script>
     <script src="https://use.fontawesome.com/releases/v5.2.0/js/all.js"></script>
-    <title>Title</title>
+    <title>Dict10nary</title>
 </head>
 <style>
     body {
@@ -114,7 +114,7 @@
 
         $.ajax({
             type: 'GET',
-            url: `/search?keyword=${keyword}`,
+            url: `/searchByKeyword/${keyword}`,
             success: function (response) {
                 $('#tbody-box').empty();
                 console.log("success 작동하니?");
@@ -133,9 +133,9 @@
 
     function addHTML(item) {
         return `<tr class="word-word">
-                <td><img class="image" src="${item.image}"></td>
-                <td><a href="${item.detailUrl}">${item.word}</a></td>
-                <td>${item.content}</td>
+                <td><img class="image" src="${item.imageUrl}"></td>
+                <td><a href="${item.detailUrl}">${item.keyword}</a></td>
+                <td>${item.contents}</td>
             </tr>`
     }
 </script>
