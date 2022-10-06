@@ -2,8 +2,6 @@ package com.example.team10searchengine;
 
 import com.example.team10searchengine.entity.kordict.KorDict;
 import com.example.team10searchengine.entity.kordict.KorDictRepository;
-import com.example.team10searchengine.entity.wiki.NaverWiki;
-import com.example.team10searchengine.entity.wiki.NaverWikiRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -11,14 +9,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RequiredArgsConstructor
 @Service
 public class service {
     private final KorDictRepository korDictRepository;
-    private final NaverWikiRepository naverWikiRepository;
+
 
 //    public List<NaverWiki> search(String keyword) {
 //        if (keyword.equals("JJang")) {
@@ -40,8 +37,4 @@ public class service {
         return korDictRepository.findByWordOrMeaning(keyword);
     }
 
-    @Transactional
-    public List<NaverWiki> getWikiFromKeyword(String keyword) {
-        return naverWikiRepository.findByKeyword(keyword);
-    }
 }

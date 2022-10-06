@@ -9,9 +9,8 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-@Entity(name="naver_wikipedia")
-public class NaverWiki {
-
+@Entity(name="wiki")
+public class Wiki {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -28,4 +27,9 @@ public class NaverWiki {
     @Column
     String detail_url;
 
+    @Column
+    String classification;
+
+    @Column
+    String category;
 }

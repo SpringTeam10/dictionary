@@ -6,7 +6,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
-public interface NaverWikiRepository extends JpaRepository<NaverWiki, Long> {
-    @Query("select nw from naver_wikipedia nw where nw.keyword like %:keyword%") //QueryDSL
-    List<NaverWiki> findByKeyword(@Param("keyword")String keyword);
+public interface WikiSameRepository extends JpaRepository<Wiki, Long> {
+    @Query("select nw from wiki nw where nw.keyword = :keyword") // jpql
+    List<Wiki> findByKeyword(@Param("keyword")String keyword);
 }
