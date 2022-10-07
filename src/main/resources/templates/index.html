@@ -102,9 +102,18 @@
     //         }
     //     })
     // }
-
+    // let korDictId = null;
+    let korDictId = null;
+    let keywordCheck;
     function execSearch() {
         let keyword = $('#input-word').val();
+        if(keywordCheck != keyword){
+            keywordCheck = keyword
+            korDictId = null;
+        }
+        console.log(keywordCheck)
+        console.log(korDictId)
+        keywordCheck = keyword;
         console.log(keyword);
         if (keyword == '') {
             alert('검색어를 입력해주세요');
@@ -112,32 +121,46 @@
             return;
         }
 
-        $.ajax({
-            type: 'GET',
-            url: `/searchByKeyword/${keyword}`,
-            success: function (response) {
-                $('#tbody-box').empty();
-                console.log("success 작동하니?");
-                console.log(response); // 찍힘
-                console.log(response.length);
-                for (let i = 0; i < response.length; i++) {
+            $.ajax({
+                type: 'GET',
+                // url: `/searchByKeyword/${keyword}`,
+                url : `mybatis/ngram/nooffset?keyword=${keyword}`,
+                data : {'korDictId':korDictId},
+                success: function (response) {
+                        $('#tbody-box').empty();
+                        console.log(response.length);
+                        korDictId = response.at(-1).id;
+                        console.log(korDictId);
 
-                    let item = response[i];
-                    console.log(item); // 안찍힘
-                    let tempHtml = addHTML(item);
-                    $('#tbody-box').append(tempHtml);
+                        for (let i = 0; i < response.length; i++) {
+                            let item = response[i];
+                            console.log(item); // 안찍힘
+                        let tempHtml = addHTML(item);
+                        $("#tbody-box").append(tempHtml);
+                    }
+
                 }
-            }
-        })
-    }
+            });
+        }
 
+
+
+
+        // function addHTML(item) {
+        //     return `<tr class="word-word">
+        //             <td><img class="image" src="${item.imageUrl}"></td>
+        //             <td><a href="${item.detailUrl}">${item.keyword}</a></td>
+        //             <td>${item.contents}</td>
+        //         </tr>`
+        // }
     function addHTML(item) {
         return `<tr class="word-word">
-                <td><img class="image" src="${item.imageUrl}"></td>
-                <td><a href="${item.detailUrl}">${item.keyword}</a></td>
-                <td>${item.contents}</td>
-            </tr>`
+                    <td><img class="image" src="#"></td>
+                    <td><a href="#">${item.word}</a></td>
+                    <td>${item.meaning}</td>
+                </tr>`
     }
+
 </script>
 <body>
 

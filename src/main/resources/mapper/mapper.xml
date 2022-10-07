@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.team10searchengine.entity.kordict.mybatisrepo.KorDictMapper">
+<!-- B-Tree 사용 출력  -->
+    <select id="findByKeyword" resultType="KorDict">
+        select *
+        from kor_dict
+        where word like '마이크로%'
+    </select>
+
+<!-- FullTextIndex 설정 후 파라미터로 키워드 받아서 출력 + paging , offset  -->
+    <select id="findByNgramParser" resultType="KorDict">
+        select kor.*
+        from (select *
+              from kor_dict) kor
+        where
+            match (word)
+            AGAINST (#{keyword} in natural language mode)
+        order by word=#{keyword} desc , pronunciation=CONCAT('[',#{keyword},']') desc, id desc
+        limit 0,15
+    </select>
+    <!-- FullTextIndex 설정 후 파라미터로 키워드 받아서 출력 + paging , No offset  -->
+    <select id="findByNgramParserNoOffset" resultType="KorDict">
+        select kor.*
+        from (select *
+              from kor_dict) kor
+        where
+            <if test="korDictId != null">
+            id &lt;(<) #{korDictId} and
+            </if>
+            match (word)
+            AGAINST (#{keyword} in natural language mode)
+        order by word=#{keyword} desc , pronunciation=CONCAT('[',#{keyword},']') desc, id desc
+        limit 10
+    </select>
+</mapper>
+
