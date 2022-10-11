@@ -16,5 +16,5 @@ public class WikiSortDto {
     private String img_url;
     private String detail_url;
     private String classification;
-    private Integer num;
+    private Integer score;
 }

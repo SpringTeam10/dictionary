@@ -5,9 +5,9 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class ResponseDto<T> { //T가 아니고 A/B어떤거든 상관없음 제네릭임을 선언
+public class ResponseDto<T> {
     private boolean success;
-    private T data; //제네릭의 변수 선언방법
+    private T data;
     private Error error;
 
     @AllArgsConstructor
