@@ -1,7 +1,7 @@
-package com.example.team10searchengine.entity.kordict.querydslrepo;
+package com.example.team10searchengine.kordict.repository.querydslrepo;
 
-import com.example.team10searchengine.entity.kordict.KorDict;
-import com.example.team10searchengine.entity.kordict.QKorDict;
+import com.example.team10searchengine.kordict.entity.KorDict;
+import com.example.team10searchengine.kordict.entity.QKorDict;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
@@ -13,7 +13,8 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-import static com.example.team10searchengine.entity.kordict.QKorDict.korDict;
+import static com.example.team10searchengine.kordict.entity.QKorDict.korDict;
+
 
 @Repository
 @RequiredArgsConstructor

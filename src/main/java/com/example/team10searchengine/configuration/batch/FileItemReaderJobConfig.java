@@ -1,6 +1,6 @@
-package com.example.team10searchengine.configuration;
+package com.example.team10searchengine.configuration.batch;
 
-import com.example.team10searchengine.entity.kordict.KorDict;
+import com.example.team10searchengine.kordict.entity.KorDict;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;

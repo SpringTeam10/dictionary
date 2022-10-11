@@ -1,6 +1,6 @@
-package com.example.team10searchengine.entity.kordict.querydslrepo;
+package com.example.team10searchengine.kordict.repository.querydslrepo;
 
-import com.example.team10searchengine.entity.kordict.KorDict;
+import com.example.team10searchengine.kordict.entity.KorDict;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;

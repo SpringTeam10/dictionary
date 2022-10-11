@@ -1,4 +1,4 @@
-package com.example.team10searchengine.entity.kordict;
+package com.example.team10searchengine.kordict.entity;
 
 import lombok.*;
 

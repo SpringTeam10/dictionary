@@ -1,4 +1,4 @@
-package com.example.team10searchengine.configuration;
+package com.example.team10searchengine.configuration.batch;
 
 import org.springframework.batch.item.file.separator.RecordSeparatorPolicy;
 

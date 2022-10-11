@@ -1,7 +1,7 @@
-package com.example.team10searchengine.entity.jpqlrepo;
+package com.example.team10searchengine.kordict.repository.jpqlrepo;
 
-import com.example.team10searchengine.entity.kordict.KorDict;
-import com.example.team10searchengine.entity.kordict.querydslrepo.KorDictCustomRepository;
+import com.example.team10searchengine.kordict.entity.KorDict;
+import com.example.team10searchengine.kordict.repository.querydslrepo.KorDictCustomRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

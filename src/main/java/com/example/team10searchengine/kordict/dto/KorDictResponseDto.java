@@ -1,4 +1,4 @@
-package com.example.team10searchengine.entity.kordict.dto;
+package com.example.team10searchengine.kordict.dto;
 
 import lombok.Builder;
 import lombok.Getter;

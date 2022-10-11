@@ -87,22 +87,6 @@
     }
 </style>
 <script>
-    // getAll();
-    // function getAll() {
-    //     $.ajax({
-    //         type:'GET',
-    //         url:'/',
-    //         success: function(response) {
-    //             $('#tbody-box').empty();
-    //             for (let i = 0; i < response.length; i++) {
-    //                 let item = response[i];
-    //                 let tempHtml = addHTML(item);
-    //                 $('#tbody-box').append(tempHtml);
-    //             }
-    //         }
-    //     })
-    // }
-    // let korDictId = null;
     let korDictId = null;
     let keywordCheck;
     let checkList = [];
@@ -120,24 +104,19 @@
         }
             $.ajax({
                 type: 'GET',
-                // url: `/searchByKeyword/${keyword}`,
                 traditional : true,
                 url : `mybatis/ngram/nooffset?keyword=${keyword}`,
                 data : {'korDictId':korDictId,'checkId' : checkList},
                 success: function (response) {
                         $('#tbody-box').empty();
-                        korDictId = response.at(-1).id;
+                        korDictId = response['data'].at(-1).id;
                         checkList = [];
-                        console.log(korDictId);
-                        for(i=0;i<response.length;i++){
-                            checkList.push(response[i].id);
+                        for(i=0;i<response['data'].length;i++){
+                            checkList.push(response['data'][i].id);
                         }
-                    console.log(checkList);
-                    console.log(response);
 
-
-                        for (let i = 0; i < response.length; i++) {
-                            let item = response[i];
+                        for (let i = 0; i < response['data'].length; i++) {
+                            let item = response['data'][i];
                         let tempHtml = addHTML(item);
                         $("#tbody-box").append(tempHtml);
                     }
@@ -146,16 +125,6 @@
             });
         }
 
-
-
-
-        // function addHTML(item) {
-        //     return `<tr class="word-word">
-        //             <td><img class="image" src="${item.imageUrl}"></td>
-        //             <td><a href="${item.detailUrl}">${item.keyword}</a></td>
-        //             <td>${item.contents}</td>
-        //         </tr>`
-        // }
     function addHTML(item) {
         return `<tr class="word-word">
                     <td><img class="image" src="#"></td>
