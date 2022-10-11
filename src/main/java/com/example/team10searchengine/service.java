@@ -1,15 +1,18 @@
 package com.example.team10searchengine;
 
+import com.example.team10searchengine.entity.jpqlrepo.KorDictRepository;
 import com.example.team10searchengine.entity.kordict.KorDict;
-import com.example.team10searchengine.entity.kordict.KorDictRepository;
+import com.example.team10searchengine.entity.kordict.dto.KorDictResponseDto;
 import com.example.team10searchengine.entity.kordict.mybatisrepo.KorDictMapper;
-import com.example.team10searchengine.entity.weke.Weke;
-import com.example.team10searchengine.entity.weke.WekeRepository;
+import com.example.team10searchengine.shared.ResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,9 +23,10 @@ import java.util.List;
 @Service
 public class service {
     private final KorDictRepository korDictRepository;
-    private final WekeRepository wekeRepository;
 
     private final KorDictMapper korDictMapper;
+
+    private List<Long> deleteId = new ArrayList<>();
 
     // 전체검색 paging
     @Transactional
@@ -83,14 +87,6 @@ public class service {
     }
 
 
-    // 지식백과 UI 테스트
-    @Transactional
-    public List<Weke> searchByKeyword(String keyword) {
-        List<Weke> a = wekeRepository.findByKeyword(keyword);
-        return a;
-    }
-
-
     // Mybatis 테스트 (Btree)
     public List<KorDict> findByKeyword() {
         Long init = System.currentTimeMillis();
@@ -110,38 +106,69 @@ public class service {
 
 
     // Nooffset을 이용한 페이징 검색 (Mybatis)
-    public List<KorDict> findByNgramParserNoOffset(String keyword,Long korDictId) {
+    public ResponseEntity<?> findByNgramParserNoOffset(String keyword,Long korDictId,Long[] checkId) {
         Long init = System.currentTimeMillis();
-        log.info("korDictId : {}",korDictId);
+
         List<KorDict> KorDictList = korDictMapper.findByNgramParserNoOffset(keyword,korDictId);
+        List<KorDictResponseDto> korDicts = new ArrayList<>();
+
+        for(KorDict korDict : KorDictList) {
+            korDicts.add(KorDictResponseDto.builder()
+                    .id(korDict.getId())
+                    .word(korDict.getWord())
+                    .is_unique(korDict.getIsUnique())
+                    .pronunciation(korDict.getPronunciation())
+                    .part(korDict.getPart())
+                    .meaning(korDict.getMeaning())
+                    .example(korDict.getExample())
+                    .field(korDict.getField())
+                    .proverb(korDict.getProverb())
+                    .idiom(korDict.getIdiom())
+                    .classification(korDict.getClassification())
+                    .build());
+        }
+
+        if(korDictId != null){
+            for(int i=0; i<korDicts.size();i++) {
+                for(Long delete : deleteId){
+                    if(delete.equals(korDicts.get(i).getId())) {
+                        korDicts.remove(i);
+                    }
+                }
+                for(Long check : checkId){
+                    if(check.equals(korDicts.get(i).getId())){
+                        korDicts.remove(i);
+                        deleteId.add(check);
+                    }
+                }
+            }
+        }
+
+        log.info("deleteId : {}",deleteId);
 
         log.info("Time : {}",System.currentTimeMillis() - init);
-        return KorDictList;
+        return new ResponseEntity<>(ResponseDto.success(korDicts), HttpStatus.OK);
     }
 
     // Nooffset을 이용한 페이징 검색 (Querydsl)
     @Transactional
     public List<KorDict> getKeywordNoOffset(String keyword, Long korDictId, Pageable pageable) {
         long startTime = System.currentTimeMillis();
-        log.info("firstKorDictId : {}",korDictId);
+
 
 
         List<KorDict> korDictList = korDictRepository.findByWordUsingQuerydsl(keyword,korDictId,pageable);
-        List<KorDict> korDicts = new ArrayList<>();
-        Long lastId = 0L;
-        for(KorDict korDict : korDictList) {
-            korDicts.add(korDict);
-            lastId = korDict.getId();
-        }
-        korDictId = lastId;
-        log.info("lastKorDictId : {}", korDictId);
-
 
 
         long endTime = System.currentTimeMillis();
         log.info("time : {}" , endTime - startTime);
-        return korDicts;
+        return korDictList;
     }
 
+    @Scheduled(cron = "0 0 4 * * * ", zone = "Asia/Seoul")
+    public void refreshDeleteId() {
+        log.info("deleteId scheduler 작동");
+        deleteId = new ArrayList<>();
+    }
 
 }

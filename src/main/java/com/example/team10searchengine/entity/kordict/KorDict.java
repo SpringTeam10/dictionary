@@ -9,12 +9,14 @@ import javax.persistence.*;
 @Data
 @Getter
 @Setter
-@Entity(name="woori_fountain")
+@IdClass(KorDictPrimary.class)
+@Entity(name="kor_dict")
 public class KorDict {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
+    @Id
     @Column
     private String word;
     @Column
@@ -36,7 +38,10 @@ public class KorDict {
     @Column
     private String idiom;
 
-    public KorDict(String word, String type, String isUnique, String pronunciation, String part, String meaning, String example, String field, String proverb, String idiom) {
+    @Column
+    private String classification;
+
+    public KorDict(String word, String type, String isUnique, String pronunciation, String part, String meaning, String example, String field, String proverb, String idiom, String classification) {
         this.word = word;
         this.type = type;
         this.isUnique = isUnique;
@@ -47,5 +52,6 @@ public class KorDict {
         this.field = field;
         this.proverb = proverb;
         this.idiom = idiom;
+        this.classification = classification;
     }
 }

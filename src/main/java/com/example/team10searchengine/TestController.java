@@ -3,6 +3,7 @@ package com.example.team10searchengine;
 import com.example.team10searchengine.entity.kordict.KorDict;
 import com.example.team10searchengine.entity.weke.Weke;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 public class TestController {
@@ -43,14 +45,15 @@ public class TestController {
     }
     @GetMapping("/mybatis/ngram/nooffset")
     public List<KorDict> findByNgramParserNoOffset(@RequestParam String keyword,
-                                                   @RequestParam(value="korDictId",required = false)Long korDictId) {
-        return service.findByNgramParserNoOffset(keyword,korDictId);
+                                                   @RequestParam(value="korDictId",required = false)Long korDictId,
+                                                   @RequestParam(value="checkId",required = false) Long[] checkId) {
+        return service.findByNgramParserNoOffset(keyword,korDictId,checkId);
     }
 
     @GetMapping("/nooffset")
     public List<KorDict> getKeywordNoOffset(@RequestParam String keyword,
                                              @RequestParam(value="korDictId",required = false)Long korDictId,
-                                             @PageableDefault Pageable pageable){
+                                             @PageableDefault() Pageable pageable){
         return service.getKeywordNoOffset(keyword,korDictId,pageable);
     }
 }

@@ -21,15 +21,25 @@
     </select>
     <!-- FullTextIndex 설정 후 파라미터로 키워드 받아서 출력 + paging , No offset  -->
     <select id="findByNgramParserNoOffset" resultType="KorDict">
-        select kor.*
+        SELECT
+            kor.id,
+            kor.word,
+            kor.is_unique,
+            kor.pronunciation,
+            kor.part,
+            kor.meaning,
+            kor.example,
+            kor.field,
+            kor.proverb,
+            kor.idiom,
+            kor.classification
         from (select *
               from kor_dict) kor
-        where
-            <if test="korDictId != null">
-            id &lt;(<) #{korDictId} and
-            </if>
-            match (word)
-            AGAINST (#{keyword} in natural language mode)
+        WHERE
+        <if test="korDictId != null">
+            id &lt; #{korDictId} and
+        </if>
+            MATCH (word) AGAINST (#{keyword} in natural language mode)
         order by word=#{keyword} desc , pronunciation=CONCAT('[',#{keyword},']') desc, id desc
         limit 10
     </select>

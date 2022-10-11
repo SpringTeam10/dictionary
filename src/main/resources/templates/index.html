@@ -105,36 +105,39 @@
     // let korDictId = null;
     let korDictId = null;
     let keywordCheck;
+    let checkList = [];
     function execSearch() {
         let keyword = $('#input-word').val();
         if(keywordCheck != keyword){
             keywordCheck = keyword
             korDictId = null;
         }
-        console.log(keywordCheck)
-        console.log(korDictId)
         keywordCheck = keyword;
-        console.log(keyword);
         if (keyword == '') {
             alert('검색어를 입력해주세요');
             $('#input-word').focus();
             return;
         }
-
             $.ajax({
                 type: 'GET',
                 // url: `/searchByKeyword/${keyword}`,
+                traditional : true,
                 url : `mybatis/ngram/nooffset?keyword=${keyword}`,
-                data : {'korDictId':korDictId},
+                data : {'korDictId':korDictId,'checkId' : checkList},
                 success: function (response) {
                         $('#tbody-box').empty();
-                        console.log(response.length);
                         korDictId = response.at(-1).id;
+                        checkList = [];
                         console.log(korDictId);
+                        for(i=0;i<response.length;i++){
+                            checkList.push(response[i].id);
+                        }
+                    console.log(checkList);
+                    console.log(response);
+
 
                         for (let i = 0; i < response.length; i++) {
                             let item = response[i];
-                            console.log(item); // 안찍힘
                         let tempHtml = addHTML(item);
                         $("#tbody-box").append(tempHtml);
                     }
