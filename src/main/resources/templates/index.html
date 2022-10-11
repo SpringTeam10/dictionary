@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
+<!--    <meta name="referrer" content="no-referrer" />-->
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
           integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
@@ -104,9 +104,9 @@
     // }
 
     function execSearch() {
-        let keyword = $('#input-word').val();
-        console.log(keyword);
-        if (keyword == '') {
+        let searchword = $('#input-word').val();
+        console.log(searchword);
+        if (searchword == '') {
             alert('검색어를 입력해주세요');
             $('#input-word').focus();
             return;
@@ -114,16 +114,11 @@
 
         $.ajax({
             type: 'GET',
-            url: `/search-wiki-ngram-filtering?keyword=${keyword}`,
+            url: `/search-wiki-ngram-sortfilter?searchword=${searchword}`,
             success: function (response) {
                 $('#tbody-box').empty();
-                console.log("success 작동하니?");
-                console.log(response); // 찍힘
-                console.log(response.length);
                 for (let i = 0; i < response.length; i++) {
-
                     let item = response[i];
-                    console.log(item); // 안찍힘
                     let tempHtml = addHTML(item);
                     $('#tbody-box').append(tempHtml);
                 }
@@ -133,7 +128,7 @@
 
     function addHTML(item) {
         return `<tr class="word-word">
-                <td><img class="image" src="${item.img_url}"></td>
+                <td><img class="image" referrerpolicy="no-referrer" src="${item.img_url}"></td>
                 <td><a href="${item.detail_url}">${item.keyword}</a></td>
                 <td>${item.contents}</td>
             </tr>`

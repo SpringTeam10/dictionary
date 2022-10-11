@@ -1,4 +1,4 @@
-package com.example.team10searchengine.entity.kordict;
+package com.example.team10searchengine.kordict;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

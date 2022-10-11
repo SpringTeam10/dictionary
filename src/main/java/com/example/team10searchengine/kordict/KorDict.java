@@ -1,4 +1,4 @@
-package com.example.team10searchengine.entity.kordict;
+package com.example.team10searchengine.kordict;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

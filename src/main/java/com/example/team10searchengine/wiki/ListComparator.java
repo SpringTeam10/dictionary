@@ -1,4 +1,6 @@
-package com.example.team10searchengine.entity.wiki;
+package com.example.team10searchengine.wiki;
+
+import com.example.team10searchengine.wiki.dto.WikiSortDto;
 
 import java.util.Comparator;
 

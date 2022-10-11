@@ -1,4 +1,4 @@
-package com.example.team10searchengine.entity.wiki;
+package com.example.team10searchengine.wiki.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,6 +16,5 @@ public class WikiSortDto {
     private String img_url;
     private String detail_url;
     private String classification;
-    private String category;
     private Integer num;
 }

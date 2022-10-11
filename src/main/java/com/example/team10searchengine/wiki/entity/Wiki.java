@@ -1,4 +1,4 @@
-package com.example.team10searchengine.entity.wiki;
+package com.example.team10searchengine.wiki.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

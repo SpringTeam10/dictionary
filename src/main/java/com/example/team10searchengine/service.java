@@ -1,7 +1,7 @@
 package com.example.team10searchengine;
 
-import com.example.team10searchengine.entity.kordict.KorDict;
-import com.example.team10searchengine.entity.kordict.KorDictRepository;
+import com.example.team10searchengine.kordict.KorDict;
+import com.example.team10searchengine.kordict.KorDictRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
