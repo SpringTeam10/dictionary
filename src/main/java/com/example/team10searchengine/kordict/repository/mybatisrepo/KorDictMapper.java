@@ -7,6 +7,6 @@ import java.util.List;
 
 @Mapper
 public interface KorDictMapper {
-    List<KorDict> findByKeyword(String keyword);
-    List<KorDict> findByNgramParserNoOffset(String keyword,Long korDictId);
+    List<KorDict> findByKeywordLike(String keyword);
+    List<KorDict> findByKeywordNgram(String keyword,Long korDictId);
 }

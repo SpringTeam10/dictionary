@@ -1,4 +1,4 @@
-package com.example.team10searchengine.wiki.jpqlrepo;
+package com.example.team10searchengine.wiki.repository.jpqlrepo;
 
 import com.example.team10searchengine.wiki.entity.Wiki;
 import org.springframework.data.jpa.repository.JpaRepository;

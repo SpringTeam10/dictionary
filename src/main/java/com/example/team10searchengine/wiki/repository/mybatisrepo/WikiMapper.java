@@ -1,4 +1,4 @@
-package com.example.team10searchengine.wiki.mybatisrepo;
+package com.example.team10searchengine.wiki.repository.mybatisrepo;
 
 import com.example.team10searchengine.wiki.dto.WikiResDto;
 import org.apache.ibatis.annotations.Mapper;

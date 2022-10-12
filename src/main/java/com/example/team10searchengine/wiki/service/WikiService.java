@@ -4,7 +4,7 @@ import com.example.team10searchengine.wiki.util.ListComparator;
 import com.example.team10searchengine.wiki.dto.WikiResDto;
 import com.example.team10searchengine.wiki.dto.WikiSortDto;
 import com.example.team10searchengine.shared.ResponseDto;
-import com.example.team10searchengine.wiki.mybatisrepo.WikiMapper;
+import com.example.team10searchengine.wiki.repository.mybatisrepo.WikiMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;

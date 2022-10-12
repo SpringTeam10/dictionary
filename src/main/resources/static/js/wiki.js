@@ -1,7 +1,7 @@
 let keywordCheck;
 
 function execSearch() {
-    let category = $("#category").val()
+    let category = $("#category option:selected").val()
     let keyword = $('#input-word').val();
     if(keywordCheck != keyword){
         $("#tbody-box").empty();
@@ -16,8 +16,7 @@ function execSearch() {
     $.ajax({
         type: 'GET',
         traditional : true,
-        url : `/search/wiki?keyword=${keyword}`,
-        data : {'category' : category},
+        url : `/search/wiki?keyword=${keyword}&category=${category}`,
         success: function (response) {
             $(".more").show();
             for (let i = 0; i < response['data'].length; i++) {
@@ -31,7 +30,7 @@ function execSearch() {
 
 function addHTML(item) {
     return `<tr class="word-word">
-                    <td><img class="image" src=${item.image_url}></td>
+                    <td><img class="image" referrerpolicy="no-referrer" src=${item.image_url}></td>
                     <td><a href=${item.detail_url}>${item.keyword}</a></td>
                     <td>${item.contents}</td>
                 </tr>`
