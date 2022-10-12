@@ -6,8 +6,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 @RequestMapping("/")
-public class HomeController {
+public class SwitchController {
     @GetMapping(path = "/kordict")
-    public String wiki() { return "kordict.html";}
+    public String kordict() { return "kordict.html";}
 
 }
