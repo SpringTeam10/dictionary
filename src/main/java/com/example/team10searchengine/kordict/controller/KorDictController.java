@@ -14,16 +14,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class KorDictController {
     private final KorDictService korDictService;
 
-
-    @GetMapping("/btree")
-    public ResponseEntity<?> findByKeyword(@RequestParam String keyword) {
-        return korDictService.findByKeyword(keyword);
-    }
-
-    @GetMapping("/mybatis/ngram/nooffset")
+    @GetMapping("/search/kordict")
     public ResponseEntity<?> findByNgramParserNoOffset(@RequestParam String keyword,
                                                        @RequestParam(value="korDictId",required = false)Long korDictId,
                                                        @RequestParam(value="checkId",required = false) Long[] checkId) {
+
         return korDictService.findByNgramParserNoOffset(keyword,korDictId,checkId);
     }
 

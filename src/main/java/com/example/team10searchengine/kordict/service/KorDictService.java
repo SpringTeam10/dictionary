@@ -22,16 +22,16 @@ public class KorDictService {
 
     private List<Long> deleteId = new ArrayList<>();
 
-    // 한 단어 B-Tree 검색 (Mybatis)
-    public ResponseEntity<?> findByKeyword(String keyword) {
-        List<KorDict> KorDictList = korDictMapper.findByKeyword(keyword);
-        return new ResponseEntity<>(ResponseDto.success(KorDictList), HttpStatus.OK);
 
-    }
-
-    // Nooffset을 이용한 페이징 검색 (Mybatis)
-    public ResponseEntity<?> findByNgramParserNoOffset(String keyword,Long korDictId,Long[] checkId) {
-        List<KorDict> KorDictList = korDictMapper.findByNgramParserNoOffset(keyword,korDictId);
+    // Nooffset을 이용한 페이징 검색 (Mybatis) / 한글자 검색 = B-Tree Like
+//    public ResponseEntity<?> findByNgramParserNoOffset(String keyword,Long korDictId,Long[] checkId)
+    public ResponseEntity<?> findByNgramParserNoOffset(String keyword,Long korDictId,Long[] checkId)
+    {
+        if(keyword.length() == 1) {
+            List<KorDict> kordict = korDictMapper.findByKeywordLike(keyword);
+            return new ResponseEntity<>(ResponseDto.success(kordict), HttpStatus.OK);
+        }
+        List<KorDict> KorDictList = korDictMapper.findByKeywordNgram(keyword,korDictId);
         List<KorDictResponseDto> korDicts = new ArrayList<>();
 
         for(KorDict korDict : KorDictList) {
