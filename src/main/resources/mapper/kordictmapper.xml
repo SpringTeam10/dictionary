@@ -9,20 +9,6 @@
         limit 10
     </select>
 
-    <!-- FullTextIndex 설정 후 파라미터로 키워드 받아서 출력 + paging , No offset  -->
-    <select id="findByKeywordNgram" resultType="KorDict">
-        SELECT kor.*
-        from (select *
-              from kor_dict) kor
-        WHERE
-        <if test="korDictId != null">
-            id &lt; #{korDictId} and
-        </if>
-            MATCH (word) AGAINST (#{keyword} in natural language mode)
-        order by word=#{keyword} desc , pronunciation=CONCAT('[',#{keyword},']') desc, id desc
-        limit 10
-    </select>
-    
     <!-- FullTextIndex 설정 후 서비스단에서 정렬  -->
     <select id="findByKeywordNgramV2" resultType="KorDict">
         SELECT kor.id,

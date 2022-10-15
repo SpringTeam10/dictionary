@@ -9,9 +9,7 @@ import java.util.List;
 public interface KorDictMapper {
     // B-tree index 사용
     List<KorDict> findByKeywordLike(String keyword);
-
-    // ngram no offset
-    List<KorDict> findByKeywordNgram(String keyword,Long korDictId);
+    
     // ngram 서비스단에서 정렬
     List<KorDict> findByKeywordNgramV2(String keyword);
 

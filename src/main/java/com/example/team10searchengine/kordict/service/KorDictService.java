@@ -9,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,49 +21,6 @@ public class KorDictService {
 
     private final KorDictMapper korDictMapper;
 
-    private List<Long> deleteId = new ArrayList<>();
-
-
-    // Nooffset을 이용한 페이징 검색 (Mybatis) / 한글자 검색 = B-Tree Like
-//    public ResponseEntity<?> findByNgramParserNoOffset(String keyword,Long korDictId,Long[] checkId)
-    public ResponseEntity<?> findByNgramParserNoOffset(String keyword,Long korDictId,Long[] checkId)
-    {
-        if(keyword.length() == 1) {
-            List<KorDict> kordict = korDictMapper.findByKeywordLike(keyword);
-            return new ResponseEntity<>(ResponseDto.success(kordict), HttpStatus.OK);
-        }
-        List<KorDict> KorDictList = korDictMapper.findByKeywordNgram(keyword,korDictId);
-        List<KorDictResponseDto> korDicts = new ArrayList<>();
-
-        for(KorDict korDict : KorDictList) {
-            korDicts.add(KorDictResponseDto.builder()
-                    .id(korDict.getId())
-                    .word(korDict.getWord())
-                    .pronunciation(korDict.getPronunciation())
-                    .meaning(korDict.getMeaning())
-                    .example(korDict.getExample())
-                    .classification(korDict.getClassification())
-                    .build());
-        }
-
-        if(korDictId != null){
-            for(int i=0; i<korDicts.size();i++) {
-                for(Long delete : deleteId){
-                    if(delete.equals(korDicts.get(i).getId())) {
-                        korDicts.remove(i);
-                    }
-                }
-                for(Long check : checkId){
-                    if(check.equals(korDicts.get(i).getId())){
-                        korDicts.remove(i);
-                        deleteId.add(check);
-                    }
-                }
-            }
-        }
-
-        return new ResponseEntity<>(ResponseDto.success(korDicts), HttpStatus.OK);
-    }
 
     @Transactional
     public ResponseEntity<?> searchKorDictNgramSort(String keyword) {
@@ -122,10 +78,5 @@ public class KorDictService {
         return korDictResponseDtoList;
     }
 
-    @Scheduled(cron = "0 0 4 * * * ", zone = "Asia/Seoul")
-    public void refreshDeleteId() {
-        log.info("deleteId scheduler 작동");
-        deleteId = new ArrayList<>();
-    }
 
 }
