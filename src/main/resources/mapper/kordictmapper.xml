@@ -22,5 +22,20 @@
         order by word=#{keyword} desc , pronunciation=CONCAT('[',#{keyword},']') desc, id desc
         limit 10
     </select>
+    
+    <!-- FullTextIndex 설정 후 서비스단에서 정렬  -->
+    <select id="findByKeywordNgramV2" resultType="KorDict">
+        SELECT kor.id,
+               kor.word,
+               kor.pronunciation,
+               kor.meaning,
+               kor.example,
+               kor.classification
+        from (select *
+        from kor_dict) kor
+        WHERE
+        MATCH (word) AGAINST (#{keyword} in natural language mode)
+        limit 500
+    </select>
 </mapper>
 

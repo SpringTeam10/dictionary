@@ -1,38 +1,21 @@
-let korDictId = null;
-let keywordCheck;
-let checkList = [];
+let data;
+let curScore;
+let curOrder = 0;
 
 function execSearch() {
     let keyword = $('#input-word').val();
-    if(keywordCheck != keyword){
-        keywordCheck = keyword
-        $("#tbody-box").empty();
-        korDictId = null;
-    }
-    keywordCheck = keyword;
-    if (keyword == '') {
-        alert('검색어를 입력해주세요');
-        $('#input-word').focus();
-        return;
-    }
+    $("#tbody-box").empty();
+    curOrder = 0;
+
     $.ajax({
         type: 'GET',
         traditional : true,
         url : `/search/kordict?keyword=${keyword}`,
-        data : {'korDictId':korDictId,'checkId' : checkList},
         success: function (response) {
-            $(".more").show();
-            korDictId = response['data'].at(-1).id;
-            checkList = [];
-            for(i=0;i<response['data'].length;i++){
-                checkList.push(response['data'][i].id);
-            }
-
-            for (let i = 0; i < response['data'].length; i++) {
-                let item = response['data'][i];
-                let tempHtml = addHTML(item);
-                $("#tbody-box").append(tempHtml);
-            }
+                data = response['data'];
+                curScore = data[0].score;
+                getMoreDataByScore()
+                $(".more").show();
         }
     });
 }
@@ -45,4 +28,18 @@ function addHTML(item) {
                     <td>${item.example}</td>
                     <td>${item.classification}</td>
                 </tr>`
+}
+function getMoreDataByScore(){
+    while(1){
+        let item = data[curOrder];
+        let itemScore = item.score;
+        if (itemScore === curScore){
+            let tempHtml = addHTML(item);
+            $("#tbody-box").append(tempHtml);
+            curOrder += 1;
+        } else {
+            curScore = itemScore
+            break
+        }
+    }
 }
