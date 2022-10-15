@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
+    <meta name="referrer" content="no-referrer" />
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
           integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
@@ -28,30 +28,34 @@
 </header>
 
 <div>
-    <a th:onclick = "|location.href = '@{/kordict}'|" class="change_url">국어사전</a>
+    <a th:onclick = "|location.href = '@{/kordict}'|" class="change_url">국어사전으로 가기</a>
     <div class="search-box d-flex justify-content-center">
         <input id="input-word" class="form-control" style="margin-right: 0.5rem">
         <button class="btn btn-light" onclick="execSearch()"><i class="fa fa-search"></i></button>
     </div>
-    <select class="form-select" aria-label="Default select example">
-        <option selected>ALL</option>
+    <select id="category" class="form-select" aria-label="Default select example">
+        <option value="전체">전체</option>
         <option value="문화">문화</option>
-        <option value="사회">사회</option>
+        <option value="사회인문">사회인문</option>
+        <option value="역사">역사</option>
+        <option value="과학">과학</option>
+        <option value="기타">기타</option>
     </select>
 </div>
 
 <table class="table">
     <thead class="thead-light">
     <tr>
-        <th scope="col">IMAGE</th>
-        <th scope="col" style="width:30%">WORD</th>
-        <th scope="col">MEANING</th>
+        <th scope="col">사진</th>
+        <th scope="col" style="width:25%">제목</th>
+        <th scope="col" style="width:40%">내용</th>
+        <th scope="col" style="width:10%">분류</th>
 
     </tr>
     </thead>
     <tbody id="tbody-box">
     </tbody>
 </table>
-<button type="button" class="btn btn-light more" onclick="execSearch()">More ▽</button>
+<button type="button" class="btn btn-light more" onclick="getMoreDataByScore()">More ▽</button>
 </body>
 </html>
