@@ -2,16 +2,34 @@ package com.example.team10searchengine.entity.kordict;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
+@SpringBootTest
 class KorDictTest {
+
+    @Autowired
+    private KorDictRedisRepository korDictRedisRepository;
+    @Autowired
+    private StringRedisTemplate redisTemplate;
     @Test
-<<<<<<< Updated upstream
-    @DisplayName("Querydsl 가능?")
-    void jpa_findWord() {
-=======
+    @DisplayName("RedisRepository test")
+    void redisTest() {
+        KorDictLog korDictLog = new KorDictLog("한글");
+        KorDictLog korDictLog2 = new KorDictLog("Korea");
+
+
+        korDictRedisRepository.save(korDictLog);
+        korDictRedisRepository.save(korDictLog2);
+        System.out.println("save 완료");
+        korDictRedisRepository.count();
+        System.out.println("count : " + korDictRedisRepository.count());
+    }
+
+    @Test
     @DisplayName("RedisTemplate")
     void redisTemplate() {
-        final String key = "상추";
+        final String key = "버섯";
 
         final ValueOperations<String,String> valueOperations = redisTemplate.opsForValue();
 
@@ -24,6 +42,5 @@ class KorDictTest {
         final String result_2 = valueOperations.get(key);
 
         System.out.println("result_2 = " + result_2);
->>>>>>> Stashed changes
     }
 }
