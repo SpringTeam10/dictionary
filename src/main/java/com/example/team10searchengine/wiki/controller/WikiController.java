@@ -24,4 +24,9 @@ public class WikiController {
         return wikiService.searchWikiNgramSort(keyword, category);
     }
 
+    @GetMapping("/search/wiki/mongoall")
+    public ResponseEntity<?> getMongoCatAllLastData() {
+        return wikiService.getMongoCatAllLastData();
+    }
+
 }

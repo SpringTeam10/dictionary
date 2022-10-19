@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class KorDictMongoResponseDto {
+public class KorDictMongoResDto {
     private String _id;
     private String word;
 }
