@@ -124,7 +124,7 @@ public class WikiService {
             return new ResponseEntity<>(ResponseDto.success(wikiMongoScience.getData()), HttpStatus.OK);
         }
 
-        return new ResponseEntity<>(ResponseDto.fail("404 Not Found","Category Doesn't Exist"), HttpStatus.OK);
+        return new ResponseEntity<>(ResponseDto.fail("404 Not Found","Category Doesn't Exist"), HttpStatus.NOT_FOUND);
     }
 
     @Transactional
