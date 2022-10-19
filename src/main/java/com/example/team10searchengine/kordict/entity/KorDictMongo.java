@@ -8,7 +8,7 @@ import javax.persistence.Id;
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Document("sort_keyword")
+@Document("kordict_sort")
 @Getter
 public class KorDictMongo{
     @Id
