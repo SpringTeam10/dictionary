@@ -1,7 +1,9 @@
 package com.example.team10searchengine.kordict.service;
 
-import com.example.team10searchengine.kordict.dto.KorDictResponseDto;
+import com.example.team10searchengine.kordict.dto.KorDictSortResponseDto;
 import com.example.team10searchengine.kordict.entity.KorDict;
+import com.example.team10searchengine.kordict.entity.KorDictMongo;
+import com.example.team10searchengine.kordict.repository.mongorepo.KorDictMongoRepository;
 import com.example.team10searchengine.kordict.repository.mybatisrepo.KorDictMapper;
 import com.example.team10searchengine.kordict.util.korListComparator;
 import com.example.team10searchengine.shared.ResponseDto;
@@ -12,6 +14,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 @Slf4j
@@ -21,25 +25,30 @@ public class KorDictService {
 
     private final KorDictMapper korDictMapper;
 
+    private final KorDictMongoRepository korDictMongoRepository;
+
 
     @Transactional
     public ResponseEntity<?> searchKorDictNgramSort(String keyword) {
-        long init = System.currentTimeMillis();
+        Long info = System.currentTimeMillis();
 
         if(keyword.length() == 1) {
             List<KorDict> kordict = korDictMapper.findByKeywordLike(keyword);
             return new ResponseEntity<>(ResponseDto.success(kordict), HttpStatus.OK);
         }
-
+        String noBlankKeyword = keyword.replace(" ", "");
+        if(korDictMongoRepository.findByKeyword(noBlankKeyword).size() != 0) {
+            return mongo(keyword,info);
+        }
         List<KorDict> korDictResponseDto = korDictMapper.findByKeywordNgramV2(keyword);
 
-        List<KorDictResponseDto> korDictResponseDtoList = getSortedKorDictList(korDictResponseDto, keyword);
-
+        List<KorDictSortResponseDto> korDictResponseDtoList = getSortedKorDictList(korDictResponseDto, keyword);
+        log.info("local millis : {}",System.currentTimeMillis() - info);
         return new ResponseEntity<>(ResponseDto.success(korDictResponseDtoList), HttpStatus.OK);
     }
 
-    public List<KorDictResponseDto> getSortedKorDictList(List<KorDict> korDictList, String keyword) {
-        List<KorDictResponseDto> korDictResponseDtoList = new ArrayList<>();
+    public List<KorDictSortResponseDto> getSortedKorDictList(List<KorDict> korDictList, String keyword) {
+        List<KorDictSortResponseDto> korDictResponseDtoList = new ArrayList<>();
 
         String[] keywordArr = keyword.split(" ");
         String noBlankKeyword = keyword.replace(" ", "");
@@ -60,7 +69,7 @@ public class KorDictService {
                 }
                 gain -= 1;
             }
-            KorDictResponseDto korDictResDto = KorDictResponseDto.builder()
+            KorDictSortResponseDto korDictResDto = KorDictSortResponseDto.builder()
                     .id(korDictResponseDto.getId())
                     .word(korDictResponseDto.getWord())
                     .meaning(korDictResponseDto.getMeaning())
@@ -69,14 +78,37 @@ public class KorDictService {
                     .classification(korDictResponseDto.getClassification())
                     .score(score)
                     .build();
-
             korDictResponseDtoList.add(korDictResDto);
         }
 
+        KorDictMongo korDictMongo = new KorDictMongo(noBlankKeyword,korDictResponseDtoList, LocalDateTime.now(ZoneId.of("Asia/Seoul")));
+
         korDictResponseDtoList.sort(new korListComparator());
+        korDictMongoRepository.save(korDictMongo);
 
         return korDictResponseDtoList;
     }
 
+    public ResponseEntity<?> mongo(String keyword,Long info) {
 
+        List<KorDictMongo> korDictMongoList = korDictMongoRepository.findByKeyword(keyword);
+        List<KorDictSortResponseDto> korDictSortResponseDtoList = new ArrayList<>();
+
+        for(KorDictMongo korDictMongo : korDictMongoList) {
+            for(int i=0 ; i<korDictMongo.getData().size(); i++) {
+                KorDictSortResponseDto korDictSortResponseDto = KorDictSortResponseDto.builder()
+                        .id(korDictMongo.getData().get(i).getId())
+                        .word(korDictMongo.getData().get(i).getWord())
+                        .meaning(korDictMongo.getData().get(i).getMeaning())
+                        .pronunciation(korDictMongo.getData().get(i).getPronunciation())
+                        .example(korDictMongo.getData().get(i).getExample())
+                        .classification(korDictMongo.getData().get(i).getClassification())
+                        .score(korDictMongo.getData().get(i).getScore())
+                        .build();
+                korDictSortResponseDtoList.add(korDictSortResponseDto);
+            }
+        }
+        log.info("mongo millis : {}",System.currentTimeMillis() - info);
+        return new ResponseEntity<>(ResponseDto.success(korDictSortResponseDtoList),HttpStatus.OK);
+    }
 }
