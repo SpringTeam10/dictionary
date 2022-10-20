@@ -1,6 +1,6 @@
-package com.example.team10searchengine.kordict.entity;
+package com.example.team10searchengine.wiki.entity;
 
-import com.example.team10searchengine.kordict.dto.KorDictSortResDto;
+import com.example.team10searchengine.wiki.dto.WikiSortResDto;
 import lombok.Getter;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -8,21 +8,20 @@ import javax.persistence.Id;
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Document("kordict_sort")
+@Document("wiki_social")
 @Getter
-public class KorDictMongo{
+public class WikiMongoSocial {
     @Id
     private String _id;
 
     private String keyword;
-    private List<KorDictSortResDto> data;
+    private List<WikiSortResDto> data;
     private LocalDateTime createdAt;
 
-    public KorDictMongo(String keyword, List<KorDictSortResDto> data, LocalDateTime createdAt) {
+    public WikiMongoSocial(String keyword, List<WikiSortResDto> data, LocalDateTime createdAt) {
         this.keyword = keyword;
         this.data = data;
         this.createdAt = createdAt;
 
     }
-
 }

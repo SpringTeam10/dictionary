@@ -1,6 +1,6 @@
 package com.example.team10searchengine.kordict.service;
 
-import com.example.team10searchengine.kordict.dto.KorDictSortResponseDto;
+import com.example.team10searchengine.kordict.dto.KorDictSortResDto;
 import com.example.team10searchengine.kordict.entity.KorDict;
 import com.example.team10searchengine.kordict.entity.KorDictMongo;
 import com.example.team10searchengine.kordict.repository.mongorepo.KorDictMongoRepository;
@@ -42,13 +42,13 @@ public class KorDictService {
         }
         List<KorDict> korDictResponseDto = korDictMapper.findByKeywordNgramV2(keyword);
 
-        List<KorDictSortResponseDto> korDictResponseDtoList = getSortedKorDictList(korDictResponseDto, keyword);
+        List<KorDictSortResDto> korDictResponseDtoList = getSortedKorDictList(korDictResponseDto, keyword);
         log.info("local millis : {}",System.currentTimeMillis() - info);
         return new ResponseEntity<>(ResponseDto.success(korDictResponseDtoList), HttpStatus.OK);
     }
 
-    public List<KorDictSortResponseDto> getSortedKorDictList(List<KorDict> korDictList, String keyword) {
-        List<KorDictSortResponseDto> korDictResponseDtoList = new ArrayList<>();
+    public List<KorDictSortResDto> getSortedKorDictList(List<KorDict> korDictList, String keyword) {
+        List<KorDictSortResDto> korDictResponseDtoList = new ArrayList<>();
 
         String[] keywordArr = keyword.split(" ");
         String noBlankKeyword = keyword.replace(" ", "");
@@ -69,7 +69,7 @@ public class KorDictService {
                 }
                 gain -= 1;
             }
-            KorDictSortResponseDto korDictResDto = KorDictSortResponseDto.builder()
+            KorDictSortResDto korDictResDto = KorDictSortResDto.builder()
                     .id(korDictResponseDto.getId())
                     .word(korDictResponseDto.getWord())
                     .meaning(korDictResponseDto.getMeaning())
@@ -92,11 +92,11 @@ public class KorDictService {
     public ResponseEntity<?> mongo(String keyword,Long info) {
 
         List<KorDictMongo> korDictMongoList = korDictMongoRepository.findByKeyword(keyword);
-        List<KorDictSortResponseDto> korDictSortResponseDtoList = new ArrayList<>();
+        List<KorDictSortResDto> korDictSortResDtoList = new ArrayList<>();
 
         for(KorDictMongo korDictMongo : korDictMongoList) {
             for(int i=0 ; i<korDictMongo.getData().size(); i++) {
-                KorDictSortResponseDto korDictSortResponseDto = KorDictSortResponseDto.builder()
+                KorDictSortResDto korDictSortResDto = KorDictSortResDto.builder()
                         .id(korDictMongo.getData().get(i).getId())
                         .word(korDictMongo.getData().get(i).getWord())
                         .meaning(korDictMongo.getData().get(i).getMeaning())
@@ -105,10 +105,10 @@ public class KorDictService {
                         .classification(korDictMongo.getData().get(i).getClassification())
                         .score(korDictMongo.getData().get(i).getScore())
                         .build();
-                korDictSortResponseDtoList.add(korDictSortResponseDto);
+                korDictSortResDtoList.add(korDictSortResDto);
             }
         }
         log.info("mongo millis : {}",System.currentTimeMillis() - info);
-        return new ResponseEntity<>(ResponseDto.success(korDictSortResponseDtoList),HttpStatus.OK);
+        return new ResponseEntity<>(ResponseDto.success(korDictSortResDtoList),HttpStatus.OK);
     }
 }

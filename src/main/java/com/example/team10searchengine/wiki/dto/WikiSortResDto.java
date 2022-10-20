@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-public class WikiSortDto {
+public class WikiSortResDto {
     private Long id;
     private String keyword;
     private String contents;
