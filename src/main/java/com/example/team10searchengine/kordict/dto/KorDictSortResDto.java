@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Builder
 @Getter
-public class KorDictSortResponseDto {
+public class KorDictSortResDto {
     private Long id;
     private String word;
     private String pronunciation;
@@ -14,7 +14,7 @@ public class KorDictSortResponseDto {
     private String classification;
     private int score;
 
-    public KorDictSortResponseDto(Long id, String word, String pronunciation, String meaning, String example, String classification,int score){
+    public KorDictSortResDto(Long id, String word, String pronunciation, String meaning, String example, String classification, int score){
         this.id = id;
         this.word = word;
         this.pronunciation = pronunciation;
