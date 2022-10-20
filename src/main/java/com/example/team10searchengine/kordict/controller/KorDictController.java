@@ -14,12 +14,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class KorDictController {
     private final KorDictService korDictService;
 
+    // service 단에서 sort
     @GetMapping("/search/kordict")
-    public ResponseEntity<?> findByNgramParserNoOffset(@RequestParam String keyword,
-                                                       @RequestParam(value="korDictId",required = false)Long korDictId,
-                                                       @RequestParam(value="checkId",required = false) Long[] checkId) {
+    public ResponseEntity<?> findByNgramParser(@RequestParam String keyword) {
 
-        return korDictService.findByNgramParserNoOffset(keyword,korDictId,checkId);
+        return korDictService.searchKorDictNgramSort(keyword);
     }
 
 }

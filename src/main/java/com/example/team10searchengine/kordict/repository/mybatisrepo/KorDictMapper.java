@@ -7,6 +7,10 @@ import java.util.List;
 
 @Mapper
 public interface KorDictMapper {
+    // B-tree index 사용
     List<KorDict> findByKeywordLike(String keyword);
-    List<KorDict> findByKeywordNgram(String keyword,Long korDictId);
+    
+    // ngram 서비스단에서 정렬
+    List<KorDict> findByKeywordNgramV2(String keyword);
+
 }

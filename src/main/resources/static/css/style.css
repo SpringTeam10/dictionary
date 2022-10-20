@@ -92,5 +92,6 @@ tbody:last-child tr:last-child td:last-child {
     margin-top : 10px;
     margin-bottom : 20px;
     display : none;
+    background : none;
 
 }
