@@ -7,6 +7,7 @@ import com.example.team10searchengine.kordict.util.korListComparator;
 import com.example.team10searchengine.shared.ResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -23,6 +24,7 @@ public class KorDictService {
 
 
     @Transactional
+    @Cacheable(value = "kordictcache")
     public ResponseEntity<?> searchKorDictNgramSort(String keyword) {
         long init = System.currentTimeMillis();
 

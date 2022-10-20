@@ -7,6 +7,7 @@ import com.example.team10searchengine.shared.ResponseDto;
 import com.example.team10searchengine.wiki.repository.mybatisrepo.WikiMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -24,6 +25,7 @@ public class WikiService {
 
 
     @Transactional
+    @Cacheable(value = "wikicache")
     public ResponseEntity<?> searchWikiNgramSort(String keyword, String category) {
         long init = System.currentTimeMillis();
 
@@ -37,8 +39,7 @@ public class WikiService {
 
         List<WikiSortDto> wikiSortDtoList = getSortedWikiList(wikiList, keyword);
 
-        log.info("keyword={}, category={}, ms={}, sorted list length={}", keyword, category, System.currentTimeMillis() - init,wikiSortDtoList.size());
-//        log.info("keyword={}, category={}, ms={}", keyword, category, System.currentTimeMillis() - init);
+        log.info("keyword={}, category={}, ms={}", keyword, category, System.currentTimeMillis() - init);
         return new ResponseEntity<>(ResponseDto.success(wikiSortDtoList), HttpStatus.OK);
     }
 
