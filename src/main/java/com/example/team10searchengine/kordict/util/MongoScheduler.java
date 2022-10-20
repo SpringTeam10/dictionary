@@ -16,25 +16,24 @@ public class MongoScheduler {
     private final KorDictMongoRepository korDictMongoRepository;
 
     @Scheduled(cron = "0 0 4 * * *")
-    public void deletePost() {
-        log.info("몽고 스케줄러 실행");
-        List<KorDictMongo> korDictMongoList = korDictMongoRepository.findAllByOrderByCreatedAtAsc();
+    public void deleteMongo() {
+        log.info("백과사전 몽고DB 삭제 스케줄러 실행");
+        List<KorDictMongo> korDictMongoList = korDictMongoRepository.findAll();
 
-        if(korDictMongoList.size() <= 200) {
+        int length = korDictMongoList.size();
+
+        if(length <= 200) {
             log.info("삭제할 데이터가 없습니다.");
+            return;
         }
-        else {
-            for(int i = 0; i<korDictMongoList.size();i++){
-                Long mongoSizeCheck = korDictMongoRepository.countBy();
-                KorDictMongo korDictMongo = korDictMongoList.get(i);
-                if(mongoSizeCheck == 200)
-                    break;
-                else {
-                    korDictMongoRepository.deleteById(korDictMongo.get_id());
-                    log.info("keyword : {} 삭제",korDictMongo.getKeyword());
-                }
-            }
+
+        int curIndex = length - 201;
+        while(curIndex >= 0){
+            korDictMongoRepository.deleteById(korDictMongoList.get(curIndex).get_id());
+            curIndex -= 1;
+
         }
+
         log.info("몽고스케줄러 종료");
     }
 }

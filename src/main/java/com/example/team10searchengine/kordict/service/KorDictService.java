@@ -36,15 +36,19 @@ public class KorDictService {
             List<KorDict> kordict = korDictMapper.findByKeywordLike(keyword);
             return new ResponseEntity<>(ResponseDto.success(kordict), HttpStatus.OK);
         }
-        String noBlankKeyword = keyword.replace(" ", "");
-        if(korDictMongoRepository.findByKeyword(noBlankKeyword).size() != 0) {
-            return mongo(keyword,info);
-        }
-        List<KorDict> korDictResponseDto = korDictMapper.findByKeywordNgramV2(keyword);
 
-        List<KorDictSortResDto> korDictResponseDtoList = getSortedKorDictList(korDictResponseDto, keyword);
-        log.info("local millis : {}",System.currentTimeMillis() - info);
-        return new ResponseEntity<>(ResponseDto.success(korDictResponseDtoList), HttpStatus.OK);
+        String noBlankKeyword = keyword.replace(" ", "");
+        KorDictMongo korDictMongoList = korDictMongoRepository.findByKeyword(noBlankKeyword);
+        if(korDictMongoList == null) {
+            List<KorDict> korDictResponseDto = korDictMapper.findByKeywordNgramV2(keyword);
+            List<KorDictSortResDto> korDictResponseDtoList = getSortedKorDictList(korDictResponseDto, keyword);
+            KorDictMongo korDictMongo = new KorDictMongo(noBlankKeyword,korDictResponseDtoList, LocalDateTime.now(ZoneId.of("Asia/Seoul")));
+            korDictMongoRepository.save(korDictMongo);
+            log.info("local millis : {}", System.currentTimeMillis() - info);
+            return new ResponseEntity<>(ResponseDto.success(korDictResponseDtoList), HttpStatus.OK);
+        }
+        log.info("mongo millis : {}", System.currentTimeMillis() - info);
+        return new ResponseEntity<>(ResponseDto.success(korDictMongoList.getData()),HttpStatus.OK);
     }
 
     public List<KorDictSortResDto> getSortedKorDictList(List<KorDict> korDictList, String keyword) {
@@ -81,34 +85,11 @@ public class KorDictService {
             korDictResponseDtoList.add(korDictResDto);
         }
 
-        KorDictMongo korDictMongo = new KorDictMongo(noBlankKeyword,korDictResponseDtoList, LocalDateTime.now(ZoneId.of("Asia/Seoul")));
+
 
         korDictResponseDtoList.sort(new korListComparator());
-        korDictMongoRepository.save(korDictMongo);
+
 
         return korDictResponseDtoList;
-    }
-
-    public ResponseEntity<?> mongo(String keyword,Long info) {
-
-        List<KorDictMongo> korDictMongoList = korDictMongoRepository.findByKeyword(keyword);
-        List<KorDictSortResDto> korDictSortResDtoList = new ArrayList<>();
-
-        for(KorDictMongo korDictMongo : korDictMongoList) {
-            for(int i=0 ; i<korDictMongo.getData().size(); i++) {
-                KorDictSortResDto korDictSortResDto = KorDictSortResDto.builder()
-                        .id(korDictMongo.getData().get(i).getId())
-                        .word(korDictMongo.getData().get(i).getWord())
-                        .meaning(korDictMongo.getData().get(i).getMeaning())
-                        .pronunciation(korDictMongo.getData().get(i).getPronunciation())
-                        .example(korDictMongo.getData().get(i).getExample())
-                        .classification(korDictMongo.getData().get(i).getClassification())
-                        .score(korDictMongo.getData().get(i).getScore())
-                        .build();
-                korDictSortResDtoList.add(korDictSortResDto);
-            }
-        }
-        log.info("mongo millis : {}",System.currentTimeMillis() - info);
-        return new ResponseEntity<>(ResponseDto.success(korDictSortResDtoList),HttpStatus.OK);
     }
 }
