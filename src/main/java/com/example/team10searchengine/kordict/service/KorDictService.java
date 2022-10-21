@@ -22,9 +22,8 @@ public class KorDictService {
 
     private final KorDictMapper korDictMapper;
 
-
     @Transactional
-    @Cacheable(value = "kordictcache")
+    @Cacheable(value = "kordictCache", cacheManager = "redisCacheManager")
     public ResponseEntity<?> searchKorDictNgramSort(String keyword) {
         long init = System.currentTimeMillis();
 

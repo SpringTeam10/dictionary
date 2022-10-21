@@ -7,6 +7,7 @@ function execSearch() {
     curOrder = 0;
     let category = $("#category option:selected").val()
     let keyword = $('#input-word').val();
+    let regEng = /[a-zA-Z]/;
 
     if (keyword === '') {
         alert('검색어를 입력해주세요');
@@ -14,18 +15,33 @@ function execSearch() {
         return;
     }
 
-    $.ajax({
-        type: 'GET',
-        traditional : true,
-        url : `/search/wiki?keyword=${keyword}&category=${category}`,
-        success: function (response) {
-            $(".more").show();
-            data = response['data'];
-            curScore = data[0].score;
+    if(keyword.length===1 || regEng.test(keyword)){
+        $.ajax({
+            type: 'GET',
+            traditional : true,
+            url : `/search/wiki-one-en?keyword=${keyword}&category=${category}`,
+            success: function (response) {
+                $(".more").show();
+                data = response;
+                curScore = data[0].score;
 
-            getMoreDataByScore()
-        }
-    });
+                getMoreDataByScore()
+            }
+        });
+    } else {
+        $.ajax({
+            type: 'GET',
+            traditional : true,
+            url : `/search/wiki-sort?keyword=${keyword}&category=${category}`,
+            success: function (response) {
+                $(".more").show();
+                data = response;
+                curScore = data[0].score;
+
+                getMoreDataByScore()
+            }
+        });
+    }
 }
 
 function getMoreDataByScore(){

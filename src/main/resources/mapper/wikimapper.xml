@@ -12,7 +12,7 @@
     <select id="findByKeywordAndCategoryLike" resultType="com.example.team10searchengine.wiki.dto.WikiResDto">
         select w.id, w.keyword, w.contents, w.img_url, w.detail_url, w.classification
         from wiki w
-        where w.keyword like #{keyword} and w.category=#{category} limit 500
+        where w.keyword like #{keyword} and w.category=#{category} limit 100
     </select>
 
     <!-- FullTextIndex ngram natural mode keyword search  -->
@@ -33,7 +33,7 @@
             match (w.keyword)
             against (#{keyword} in natural language mode)
             and w.category = #{category}
-            limit 500
+            limit 100
     </select>
 
 </mapper>

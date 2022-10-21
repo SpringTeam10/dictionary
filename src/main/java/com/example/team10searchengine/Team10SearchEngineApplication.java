@@ -9,7 +9,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableJpaAuditing
 @EnableScheduling
 @SpringBootApplication
-@EnableCaching
 public class Team10SearchEngineApplication {
 
     public static void main(String[] args) {
