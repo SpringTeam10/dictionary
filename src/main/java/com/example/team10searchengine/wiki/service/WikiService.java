@@ -22,7 +22,7 @@ public class WikiService {
 
     @Transactional
     @Cacheable(value = "wikiCache", cacheManager = "redisCacheManager")
-    public List<WikiSortDto> searchWikiNgramSort(String keyword, String category) {
+    public List<?> searchWikiNgramSort(String keyword, String category) {
         long init = System.currentTimeMillis();
 
         List<WikiResDto> wikiList;
@@ -40,7 +40,7 @@ public class WikiService {
     }
 
     @Transactional
-    public List<WikiResDto> searchWikiLikeToken(String keyword, String category) {
+    public List<?> searchWikiLikeToken(String keyword, String category) {
         long init = System.currentTimeMillis();
 
         if(keyword.contains(" ")){

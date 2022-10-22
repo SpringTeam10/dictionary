@@ -35,7 +35,7 @@ public class KorDictService {
         List<KorDict> korDictResponseDto = korDictMapper.findByKeywordNgramV2(keyword);
 
         List<KorDictResponseDto> korDictResponseDtoList = getSortedKorDictList(korDictResponseDto, keyword);
-
+        log.info("keyword={}, ms={}", keyword, System.currentTimeMillis() - init);
         return new ResponseEntity<>(ResponseDto.success(korDictResponseDtoList), HttpStatus.OK);
     }
 

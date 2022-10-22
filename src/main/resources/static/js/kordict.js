@@ -12,7 +12,7 @@ function execSearch() {
         traditional : true,
         url : `/search/kordict?keyword=${keyword}`,
         success: function (response) {
-                data = response['data'];
+                data = response;
                 curScore = data[0].score;
                 getMoreDataByScore()
                 $(".more").show();
