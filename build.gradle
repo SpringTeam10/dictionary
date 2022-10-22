@@ -50,17 +50,13 @@ dependencies {
     implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:2.2.0'
     runtimeOnly 'mysql:mysql-connector-java:8.0.25'
 
-    // Redis 의존성 추가
-    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
-    implementation 'io.lettuce:lettuce-core:6.1.5.RELEASE'
-
     // mongoDB
     implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
 }
 
-tasks.named('test') {
-    useJUnitPlatform()
-}
+//tasks.named('test') {
+//    useJUnitPlatform()
+//}
 
 // querydsl 사용할 경로 지정합니다. 현재 지정한 부분은 .gitignore에 포함되므로 git에 올라가지 않습니다.
 def querydslDir = "$buildDir/generated/'querydsl'"

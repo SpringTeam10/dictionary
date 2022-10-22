@@ -30,7 +30,7 @@ public class KorDictService {
 
     @Transactional
     public ResponseEntity<?> searchKorDictNgramSort(String keyword) {
-        Long info = System.currentTimeMillis();
+        long info = System.currentTimeMillis();
 
         if(keyword.length() == 1) {
             List<KorDict> kordict = korDictMapper.findByKeywordLike(keyword);
@@ -44,10 +44,10 @@ public class KorDictService {
             List<KorDictSortResDto> korDictResponseDtoList = getSortedKorDictList(korDictResponseDto, keyword);
             KorDictMongo korDictMongo = new KorDictMongo(noBlankKeyword,korDictResponseDtoList, LocalDateTime.now(ZoneId.of("Asia/Seoul")));
             korDictMongoRepository.save(korDictMongo);
-            log.info("local millis : {}", System.currentTimeMillis() - info);
+            log.info("local millis : {}, keyword: {}", System.currentTimeMillis() - info, keyword);
             return new ResponseEntity<>(ResponseDto.success(korDictResponseDtoList), HttpStatus.OK);
         }
-        log.info("mongo millis : {}", System.currentTimeMillis() - info);
+        log.info("mongo millis : {}, keyword: {}", System.currentTimeMillis() - info, keyword);
         return new ResponseEntity<>(ResponseDto.success(korDictMongoList.getData()),HttpStatus.OK);
     }
 
