@@ -36,13 +36,13 @@
 
         <resources>
             <!-- 캐시에 최대 몇개 까지 유지할지. 삭제 대상 별도 설정 안하면 LRU(Least Recently Used) -->
-            <heap unit="entries">2000</heap>
+            <heap unit="entries">3000</heap>
         </resources>
     </cache-template>
 
     <!--
         alias 는 @Cacheable(value = "", key="#") value 값으로
     -->
-    <cache alias="wikicache" uses-template="template"></cache>
-    <cache alias="kordictcache" uses-template="template"></cache>
+    <cache alias="wikiCache" uses-template="template"></cache>
+    <cache alias="kordictCache" uses-template="template"></cache>
 </config>

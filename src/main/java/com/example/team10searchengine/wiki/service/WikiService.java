@@ -23,9 +23,8 @@ public class WikiService {
 
     private final WikiMapper wikiMapper;
 
-
     @Transactional
-    @Cacheable(value = "wikicache")
+    @Cacheable(value = "wikiCache")
     public ResponseEntity<?> searchWikiNgramSort(String keyword, String category) {
         long init = System.currentTimeMillis();
 
@@ -101,54 +100,6 @@ public class WikiService {
         wikiSortDtoList.sort(new ListComparator());
 
         return wikiSortDtoList;
-    }
-
-    public ArrayList<WikiSortDto>[] getSortedWikiListV2(List<WikiResDto> wikiList, String keyword){
-
-        String[] keywordArr = keyword.split(" ");
-
-        int keywordTokenNum = keywordArr.length;
-        int maxScore = 0;
-        for(int i=keywordTokenNum; i>0 ; i--){
-            maxScore += i;
-        }
-
-        ArrayList<WikiSortDto>[] dataListByScore = new ArrayList[maxScore];
-        for (int i = 0; i< maxScore; i++){
-            dataListByScore[i] = new ArrayList<>();
-        }
-
-
-        for(WikiResDto wiki : wikiList){
-            String noBlankKeyword = wiki.getKeyword().replace(" ","");
-
-            int gain = keywordTokenNum;
-            int score = 0;
-
-            for(String word: keywordArr){
-                if(noBlankKeyword.contains(word)){
-                    score += gain;
-                }
-                gain -= 1;
-            }
-
-            if(score > 0){
-                WikiSortDto wikiSortDto = WikiSortDto.builder()
-                        .id(wiki.getId())
-                        .keyword(wiki.getKeyword())
-                        .contents(wiki.getContents())
-                        .img_url(wiki.getImg_url())
-                        .detail_url(wiki.getDetail_url())
-                        .classification(wiki.getClassification())
-                        .score(score)
-                        .build();
-
-                dataListByScore[score-1].add(wikiSortDto);
-            }
-
-        }
-
-        return dataListByScore;
     }
 
 }
