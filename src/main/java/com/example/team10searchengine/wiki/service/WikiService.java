@@ -1,5 +1,6 @@
 package com.example.team10searchengine.wiki.service;
 
+import com.example.team10searchengine.wiki.dto.RankResponseDto;
 import com.example.team10searchengine.wiki.entity.*;
 import com.example.team10searchengine.wiki.repository.mongorepo.*;
 import com.example.team10searchengine.wiki.util.ListComparator;
@@ -9,6 +10,8 @@ import com.example.team10searchengine.shared.ResponseDto;
 import com.example.team10searchengine.wiki.repository.mybatisrepo.WikiMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -18,6 +21,8 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -31,12 +36,13 @@ public class WikiService {
     private final WikiMongoHistoryRepository wikiMongoHistoryRepository;
     private final WikiMongoScienceRepository wikiMongoScienceRepository;
     private final WikiMongoSocialRepository wikiMongoSocialRepository;
+    private final RedisTemplate<String, String> redisTemplate;
 
 
     @Transactional
     public ResponseEntity<?> searchWikiNgramSort(String keyword, String category) {
         long init = System.currentTimeMillis();
-
+        updateScoreForRanking(keyword);
         List<WikiResDto> wikiList;
 
         if (category.equals("전체")){
@@ -130,7 +136,7 @@ public class WikiService {
     @Transactional
     public ResponseEntity<?> searchWikiLikeToken(String keyword, String category) {
         long init = System.currentTimeMillis();
-
+        updateScoreForRanking(keyword);
         String init_keyword = keyword;
 
         if(keyword.contains(" ")){
@@ -222,9 +228,20 @@ public class WikiService {
     }
 
     @Transactional
-    public ResponseEntity<?> getMongoCatAllLastData(){
-        List<WikiMongoAll> wikiMongoAllList = wikiMongoAllRepository.findAll();
-        return new ResponseEntity<>(ResponseDto.success(wikiMongoAllList.get(wikiMongoAllList.size()-1)), HttpStatus.OK);
+    public List<RankResponseDto> getWikiRankList(){
+        ZSetOperations<String, String> ZSetOperations = redisTemplate.opsForZSet();
+        Set<ZSetOperations.TypedTuple<String>> typedTuples = ZSetOperations.reverseRangeWithScores("ranking", 0, 9);
+        return typedTuples.stream().map(RankResponseDto::convertToRankResponseDto).collect(Collectors.toList());
+    }
+
+    public void updateScoreForRanking(String keyword){
+        double score = 0.0;
+        try {
+            redisTemplate.opsForZSet().incrementScore("ranking", keyword,1);
+        } catch (Exception e) {
+            System.out.println(e.toString());
+        }
+        redisTemplate.opsForZSet().incrementScore("ranking", keyword, score);
     }
 
     public List<WikiSortResDto> getSortedWikiList(List<WikiResDto> wikiList, String keyword){

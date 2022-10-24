@@ -1,5 +1,6 @@
 package com.example.team10searchengine.wiki.controller;
 
+import com.example.team10searchengine.wiki.dto.RankResponseDto;
 import com.example.team10searchengine.wiki.service.WikiService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -7,6 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
 import java.util.regex.Pattern;
 
 @RestController
@@ -24,9 +26,9 @@ public class WikiController {
         return wikiService.searchWikiNgramSort(keyword, category);
     }
 
-    @GetMapping("/search/wiki/mongoall")
-    public ResponseEntity<?> getMongoCatAllLastData() {
-        return wikiService.getMongoCatAllLastData();
+    @GetMapping("/search/wiki/ranking")
+    public List<RankResponseDto> getWikiRankList() {
+        return wikiService.getWikiRankList();
     }
 
 }
