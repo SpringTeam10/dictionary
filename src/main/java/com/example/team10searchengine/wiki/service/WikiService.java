@@ -131,21 +131,94 @@ public class WikiService {
     public ResponseEntity<?> searchWikiLikeToken(String keyword, String category) {
         long init = System.currentTimeMillis();
 
+        String init_keyword = keyword;
+
         if(keyword.contains(" ")){
             keyword = keyword.replace(" ","%") + "%";
         }
 
         List<WikiResDto> wikiList;
 
-        if(category.equals("전체")) {
-            wikiList = wikiMapper.findByKeywordLike(keyword + "%");
-            log.info("keyword={}, category={}, ms={}",keyword, category, System.currentTimeMillis() - init);
-            return new ResponseEntity<>(ResponseDto.success(wikiList), HttpStatus.OK);
+        if (category.equals("전체")){
+            WikiMongoAll wikiMongoAll = wikiMongoAllRepository.findByKeyword(init_keyword);
+            if(wikiMongoAll == null){
+                wikiList = wikiMapper.findByKeywordLike(keyword + "%");
+                WikiMongoAll saveWikiMongoAll = new WikiMongoAll(init_keyword,wikiList, LocalDateTime.now(ZoneId.of("Asia/Seoul")));
+                wikiMongoAllRepository.save(saveWikiMongoAll);
+                log.info("local millis : {}, keyword: {}, category: {}",System.currentTimeMillis() - init, keyword, category);
+                return new ResponseEntity<>(ResponseDto.success(wikiList), HttpStatus.OK);
+            }
+            log.info("mongo millis : {}, keyword: {}, category: {}",System.currentTimeMillis() - init, keyword, category);
+            return new ResponseEntity<>(ResponseDto.success(wikiMongoAll.getData()), HttpStatus.OK);
         }
 
-        wikiList = wikiMapper.findByKeywordAndCategoryLike(keyword + "%", category);
-        log.info("keyword={}, category={}, ms={}",keyword, category, System.currentTimeMillis() - init);
-        return new ResponseEntity<>(ResponseDto.success(wikiList), HttpStatus.OK);
+        if(category.equals("사회인문")){
+            WikiMongoSocial wikiMongoSocial = wikiMongoSocialRepository.findByKeyword(init_keyword);
+            if(wikiMongoSocial == null){
+                wikiList = wikiMapper.findByKeywordLike(keyword + "%");
+                WikiMongoSocial saveWikiMongoSocial = new WikiMongoSocial(init_keyword,wikiList, LocalDateTime.now(ZoneId.of("Asia/Seoul")));
+                wikiMongoSocialRepository.save(saveWikiMongoSocial);
+                log.info("local millis : {}, keyword: {}, category: {}",System.currentTimeMillis() - init, keyword, category);
+                return new ResponseEntity<>(ResponseDto.success(wikiList), HttpStatus.OK);
+            }
+            log.info("mongo millis : {}, keyword: {}, category: {}",System.currentTimeMillis() - init, keyword, category);
+            return new ResponseEntity<>(ResponseDto.success(wikiMongoSocial.getData()), HttpStatus.OK);
+        }
+
+
+        if(category.equals("기타")){
+            WikiMongoEtc wikiMongoEtc = wikiMongoEtcRepository.findByKeyword(init_keyword);
+            if(wikiMongoEtc == null){
+                wikiList = wikiMapper.findByKeywordLike(keyword + "%");
+                WikiMongoEtc saveWikiMongoEtc = new WikiMongoEtc(init_keyword,wikiList, LocalDateTime.now(ZoneId.of("Asia/Seoul")));
+                wikiMongoEtcRepository.save(saveWikiMongoEtc);
+                log.info("local millis : {}, keyword: {}, category: {}",System.currentTimeMillis() - init, keyword, category);
+                return new ResponseEntity<>(ResponseDto.success(wikiList), HttpStatus.OK);
+            }
+            log.info("mongo millis : {}, keyword: {}, category: {}",System.currentTimeMillis() - init, keyword, category);
+            return new ResponseEntity<>(ResponseDto.success(wikiMongoEtc.getData()), HttpStatus.OK);
+        }
+
+        if(category.equals("문화")){
+            WikiMongoCulture wikiMongoCulture = wikiMongoCultureRepository.findByKeyword(init_keyword);
+            if(wikiMongoCulture == null){
+                wikiList = wikiMapper.findByKeywordLike(keyword + "%");
+                WikiMongoCulture saveWikiMongoCulture = new WikiMongoCulture(init_keyword,wikiList, LocalDateTime.now(ZoneId.of("Asia/Seoul")));
+                wikiMongoCultureRepository.save(saveWikiMongoCulture);
+                log.info("local millis : {}, keyword: {}, category: {}",System.currentTimeMillis() - init, keyword, category);
+                return new ResponseEntity<>(ResponseDto.success(wikiList), HttpStatus.OK);
+            }
+            log.info("mongo millis : {}, keyword: {}, category: {}",System.currentTimeMillis() - init, keyword, category);
+            return new ResponseEntity<>(ResponseDto.success(wikiMongoCulture.getData()), HttpStatus.OK);
+        }
+
+        if(category.equals("역사")){
+            WikiMongoHistory wikiMongoHistory = wikiMongoHistoryRepository.findByKeyword(init_keyword);
+            if(wikiMongoHistory == null){
+                wikiList = wikiMapper.findByKeywordLike(keyword + "%");
+                WikiMongoHistory saveWikiMongoHistory = new WikiMongoHistory(init_keyword,wikiList, LocalDateTime.now(ZoneId.of("Asia/Seoul")));
+                wikiMongoHistoryRepository.save(saveWikiMongoHistory);
+                log.info("local millis : {}, keyword: {}, category: {}",System.currentTimeMillis() - init, keyword, category);
+                return new ResponseEntity<>(ResponseDto.success(wikiList), HttpStatus.OK);
+            }
+            log.info("mongo millis : {}, keyword: {}, category: {}",System.currentTimeMillis() - init, keyword, category);
+            return new ResponseEntity<>(ResponseDto.success(wikiMongoHistory.getData()), HttpStatus.OK);
+        }
+
+        if(category.equals("과학")){
+            WikiMongoScience wikiMongoScience = wikiMongoScienceRepository.findByKeyword(init_keyword);
+            if(wikiMongoScience == null){
+                wikiList = wikiMapper.findByKeywordLike(keyword + "%");
+                WikiMongoScience saveWikiMongoScience = new WikiMongoScience(init_keyword,wikiList, LocalDateTime.now(ZoneId.of("Asia/Seoul")));
+                wikiMongoScienceRepository.save(saveWikiMongoScience);
+                log.info("local millis : {}, keyword: {}, category: {}",System.currentTimeMillis() - init, keyword, category);
+                return new ResponseEntity<>(ResponseDto.success(wikiList), HttpStatus.OK);
+            }
+            log.info("mongo millis : {}, keyword: {}, category: {}",System.currentTimeMillis() - init, keyword, category);
+            return new ResponseEntity<>(ResponseDto.success(wikiMongoScience.getData()), HttpStatus.OK);
+        }
+
+        return new ResponseEntity<>(ResponseDto.fail("404 Not Found","Category Doesn't Exist"), HttpStatus.NOT_FOUND);
     }
 
     @Transactional
