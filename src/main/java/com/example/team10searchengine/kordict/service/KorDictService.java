@@ -40,6 +40,7 @@ public class KorDictService {
         return new ResponseEntity<>(ResponseDto.success(korDictResponseDtoList), HttpStatus.OK);
     }
 
+    @Cacheable(value = "kordictCache")
     public List<KorDictResponseDto> getSortedKorDictList(List<KorDict> korDictList, String keyword) {
         List<KorDictResponseDto> korDictResponseDtoList = new ArrayList<>();
 

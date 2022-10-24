@@ -43,6 +43,7 @@ public class WikiService {
     }
 
     @Transactional
+    @Cacheable(value = "wikiCache")
     public ResponseEntity<?> searchWikiLikeToken(String keyword, String category) {
         long init = System.currentTimeMillis();
 
