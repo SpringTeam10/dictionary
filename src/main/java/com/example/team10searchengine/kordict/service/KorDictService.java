@@ -24,19 +24,20 @@ public class KorDictService {
 
     @Transactional
     @Cacheable(value = "kordictCache", cacheManager = "redisCacheManager")
-    public ResponseEntity<?> searchKorDictNgramSort(String keyword) {
+    public List<?> searchKorDictNgramSort(String keyword) {
         long init = System.currentTimeMillis();
 
         if(keyword.length() == 1) {
             List<KorDict> kordict = korDictMapper.findByKeywordLike(keyword);
-            return new ResponseEntity<>(ResponseDto.success(kordict), HttpStatus.OK);
+            log.info("keyword={}, ms={}", keyword, System.currentTimeMillis() - init);
+            return kordict;
         }
 
         List<KorDict> korDictResponseDto = korDictMapper.findByKeywordNgramV2(keyword);
 
         List<KorDictResponseDto> korDictResponseDtoList = getSortedKorDictList(korDictResponseDto, keyword);
         log.info("keyword={}, ms={}", keyword, System.currentTimeMillis() - init);
-        return new ResponseEntity<>(ResponseDto.success(korDictResponseDtoList), HttpStatus.OK);
+        return korDictResponseDtoList;
     }
 
     public List<KorDictResponseDto> getSortedKorDictList(List<KorDict> korDictList, String keyword) {

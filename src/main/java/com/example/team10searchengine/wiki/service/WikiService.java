@@ -40,6 +40,7 @@ public class WikiService {
     }
 
     @Transactional
+    @Cacheable(value = "wikiCache", cacheManager = "redisCacheManager")
     public List<?> searchWikiLikeToken(String keyword, String category) {
         long init = System.currentTimeMillis();
 

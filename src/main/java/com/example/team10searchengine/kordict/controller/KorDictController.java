@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -16,7 +18,7 @@ public class KorDictController {
 
     // service 단에서 sort
     @GetMapping("/search/kordict")
-    public ResponseEntity<?> findByNgramParser(@RequestParam String keyword) {
+    public List<?> findByNgramParser(@RequestParam String keyword) {
 
         return korDictService.searchKorDictNgramSort(keyword);
     }
