@@ -12,7 +12,7 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 @Component
-public class MongoScheduler {
+public class KorDictScheduler {
     private final KorDictMongoRepository korDictMongoRepository;
 
     @Scheduled(cron = "0 0 4 * * *")

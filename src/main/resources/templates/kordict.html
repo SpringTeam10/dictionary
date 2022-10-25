@@ -33,7 +33,14 @@
     <input id="input-word" class="form-control" style="margin-right: 0.5rem">
     <button class="btn btn-light" onclick="execSearch()"><i class="fa fa-search"></i></button>
   </div>
-
+  <div class="korcontainer-fluid">
+    <div class="favorite">
+      <i class="fa fa-plus-square" data-toggle="collapse" href="#collapseExample" onclick="popularSearch()" aria-expanded="false" aria-controls="collapseExample"></i>
+      <span style="margin-left:10px;">인기검색어</span>
+    </div>
+    <div class="collapse" id="collapseExample">
+    </div>
+  </div>
 </div>
 
 <table class="table">

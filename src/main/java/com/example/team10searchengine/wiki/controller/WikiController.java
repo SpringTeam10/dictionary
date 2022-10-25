@@ -1,6 +1,6 @@
 package com.example.team10searchengine.wiki.controller;
 
-import com.example.team10searchengine.wiki.dto.RankResponseDto;
+import com.example.team10searchengine.shared.RankResponseDto;
 import com.example.team10searchengine.wiki.service.WikiService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

@@ -7,8 +7,11 @@ import com.example.team10searchengine.kordict.repository.mongorepo.KorDictMongoR
 import com.example.team10searchengine.kordict.repository.mybatisrepo.KorDictMapper;
 import com.example.team10searchengine.kordict.util.korListComparator;
 import com.example.team10searchengine.shared.ResponseDto;
+import com.example.team10searchengine.shared.RankResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -18,6 +21,9 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 @Slf4j
 @RequiredArgsConstructor
 @Service
@@ -27,11 +33,12 @@ public class KorDictService {
 
     private final KorDictMongoRepository korDictMongoRepository;
 
+    private final RedisTemplate<String, String> redisTemplate;
 
     @Transactional
     public ResponseEntity<?> searchKorDictNgramSort(String keyword) {
         long info = System.currentTimeMillis();
-
+        updateScoreForRanking(keyword);
         if(keyword.length() == 1) {
             List<KorDict> kordict = korDictMapper.findByKeywordLike(keyword);
             return new ResponseEntity<>(ResponseDto.success(kordict), HttpStatus.OK);
@@ -91,5 +98,22 @@ public class KorDictService {
 
 
         return korDictResponseDtoList;
+    }
+
+    @Transactional
+    public List<RankResponseDto> getKorDictRankList(){
+        ZSetOperations<String, String> ZSetOperations = redisTemplate.opsForZSet();
+        Set<ZSetOperations.TypedTuple<String>> typedTuples = ZSetOperations.reverseRangeWithScores("korranking", 0, 9);
+        return typedTuples.stream().map(RankResponseDto::convertToRankResponseDto).collect(Collectors.toList());
+    }
+
+    public void updateScoreForRanking(String keyword){
+        double score = 0.0;
+        try {
+            redisTemplate.opsForZSet().incrementScore("korranking", keyword,1);
+        } catch (Exception e) {
+            log.info(e.toString());
+        }
+        redisTemplate.opsForZSet().incrementScore("korranking", keyword, score);
     }
 }

@@ -20,6 +20,25 @@ function execSearch() {
     });
 }
 
+function popularSearch() {
+    $("#collapseExample").empty();
+    $.ajax({
+        type: 'GET',
+        url : `/search/kordict/ranking`,
+        success: function (response) {
+            for(let i=0; i<response.length; i++) {
+                let item = response[i];
+                let tempHtml = addpopular(item);
+                $("#collapseExample").append(tempHtml);
+            }
+        }
+    });
+}
+
+function addpopular(item) {
+    return `<li> ${item.rankKeyword} </li>`
+}
+
 function addHTML(item) {
     return `<tr class="word-word">
                     <td>${item.word}</td>

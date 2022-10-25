@@ -1,13 +1,13 @@
 package com.example.team10searchengine.wiki.service;
 
-import com.example.team10searchengine.wiki.dto.RankResponseDto;
-import com.example.team10searchengine.wiki.entity.*;
-import com.example.team10searchengine.wiki.repository.mongorepo.*;
-import com.example.team10searchengine.wiki.util.ListComparator;
+import com.example.team10searchengine.shared.ResponseDto;
+import com.example.team10searchengine.shared.RankResponseDto;
 import com.example.team10searchengine.wiki.dto.WikiResDto;
 import com.example.team10searchengine.wiki.dto.WikiSortResDto;
-import com.example.team10searchengine.shared.ResponseDto;
+import com.example.team10searchengine.wiki.entity.*;
+import com.example.team10searchengine.wiki.repository.mongorepo.*;
 import com.example.team10searchengine.wiki.repository.mybatisrepo.WikiMapper;
+import com.example.team10searchengine.wiki.util.ListComparator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -239,7 +239,7 @@ public class WikiService {
         try {
             redisTemplate.opsForZSet().incrementScore("ranking", keyword,1);
         } catch (Exception e) {
-            System.out.println(e.toString());
+            log.info(e.toString());
         }
         redisTemplate.opsForZSet().incrementScore("ranking", keyword, score);
     }

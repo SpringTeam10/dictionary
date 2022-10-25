@@ -1,4 +1,4 @@
-package com.example.team10searchengine.wiki.dto;
+package com.example.team10searchengine.shared;
 
 import lombok.*;
 import org.springframework.data.redis.core.ZSetOperations;
