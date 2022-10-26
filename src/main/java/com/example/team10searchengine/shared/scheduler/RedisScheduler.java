@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 public class RedisScheduler {
     private final RedisTemplate<String, String> redisTemplate;
 
-    @Scheduled(cron = "0 0 */1 * * *")
+    @Scheduled(cron = "0 0 */3 * * *")
     public void deleteAllRedis() {
         redisTemplate.delete("korranking");
         redisTemplate.delete("ranking");
