@@ -48,10 +48,12 @@ tbody:last-child tr:last-child td:last-child {
     width : 400px;
 }
 .form-select {
-    margin-bottom : 30px;
-    margin-left : 900px;
+    position : relative;
+    display : block; margin-bottom : 5%;
+    margin-left : 66%;
+    margin-top : -2.8%;
     width : 100px;
-
+    border-radius : 5px;
 }
 #header {
     text-align: center;

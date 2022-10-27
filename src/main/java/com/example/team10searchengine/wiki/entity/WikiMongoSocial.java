@@ -1,6 +1,5 @@
 package com.example.team10searchengine.wiki.entity;
 
-import com.example.team10searchengine.wiki.dto.WikiSortResDto;
 import lombok.Getter;
 import org.springframework.data.mongodb.core.mapping.Document;
 

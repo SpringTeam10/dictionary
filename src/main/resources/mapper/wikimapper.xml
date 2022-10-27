@@ -8,11 +8,25 @@
         where w.keyword like #{keyword} limit 500
     </select>
 
+    <!-- B-Tree like 패턴 이용 keyword search 한글자  -->
+    <select id="findByKeywordOne" resultType="com.example.team10searchengine.wiki.dto.WikiResDto">
+        select w.id, w.keyword, w.contents, w.img_url, w.detail_url, w.classification
+        from wiki w
+        where w.keyword=#{keyword} limit 500
+    </select>
+
     <!-- B-Tree like 패턴 이용 keyword, category search  -->
-    <select id="findByKeywordAndCategoryLike" resultType="com.example.team10searchengine.wiki.dto.WikiResDto">
+    <select id="findByKeywordAndCategoryOne" resultType="com.example.team10searchengine.wiki.dto.WikiResDto">
         select w.id, w.keyword, w.contents, w.img_url, w.detail_url, w.classification
         from wiki w
         where w.keyword like #{keyword} and w.category=#{category} limit 100
+    </select>
+
+    <!-- B-Tree like 패턴 이용 keyword, category search 한글자 -->
+    <select id="findByKeywordAndCategoryLike" resultType="com.example.team10searchengine.wiki.dto.WikiResDto">
+        select w.id, w.keyword, w.contents, w.img_url, w.detail_url, w.classification
+        from wiki w
+        where w.keyword=#{keyword} and w.category=#{category} limit 100
     </select>
 
     <!-- FullTextIndex ngram natural mode keyword search  -->
