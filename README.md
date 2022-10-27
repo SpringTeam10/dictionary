@@ -6,8 +6,3 @@
 
 dict10nary의 검색 및 캐싱등 전반적인 로직이 포함되어 있는 Repository 입니다.
 
-# 👩‍💻 Coding Convention
-https://www.notion.so/Coding-Convention-49234aa4807c4db7b85e5bfcf5761d8a
-
-# 📘 Github Convention
-https://www.notion.so/Github-Convention-227c05c307b145d1817922bfb445081c
