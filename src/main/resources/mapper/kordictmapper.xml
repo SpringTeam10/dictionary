@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.team10searchengine.kordict.repository.mybatisrepo.KorDictMapper">
-    <!-- B-Tree 사용 출력  -->
+    <!-- B-Tree 사용 1글자 출력  -->
     <select id="findByKeywordLike" resultType="KorDict">
         select *
         from kor_dict
-        where word like CONCAT(#{keyword},'%')
-        limit 500
+        where word = #{keyword}
     </select>
 
     <!-- FullTextIndex 설정 후 서비스단에서 정렬  -->
