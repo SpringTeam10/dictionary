@@ -200,6 +200,7 @@ public class WikiService {
 
     @Transactional
     public ResponseEntity<?> searchWikiOne(String keyword, String category) {
+        updateScoreForRanking(keyword);
         if(category.equals("전체")) {
             return new ResponseEntity<>(ResponseDto.success(wikiMapper.findByKeywordOne(keyword)), HttpStatus.OK);
         }
