@@ -199,6 +199,14 @@ public class WikiService {
     }
 
     @Transactional
+    public ResponseEntity<?> searchWikiOne(String keyword, String category) {
+        if(category.equals("전체")) {
+            return new ResponseEntity<>(ResponseDto.success(wikiMapper.findByKeywordOne(keyword)), HttpStatus.OK);
+        }
+        return new ResponseEntity<>(ResponseDto.success(wikiMapper.findByKeywordAndCategoryOne(keyword,category)), HttpStatus.OK);
+    }
+
+    @Transactional
     public List<RankResponseDto> getWikiRankList(){
         ZSetOperations<String, String> ZSetOperations = redisTemplate.opsForZSet();
         Set<ZSetOperations.TypedTuple<String>> typedTuples = ZSetOperations.reverseRangeWithScores("ranking", 0, 9);
