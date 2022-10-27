@@ -20,12 +20,11 @@ public class KorDictController {
     // service 단에서 sort
     @GetMapping("/search/kordict")
     public ResponseEntity<?> findByNgramParser(@RequestParam String keyword) {
-
         return korDictService.searchKorDictNgramSort(keyword);
     }
 
     @GetMapping("/search/kordict/ranking")
-    public List<RankResponseDto> getWikiRankList() {
+    public List<RankResponseDto> getKorDictRankList() {
         return korDictService.getKorDictRankList();
     }
 

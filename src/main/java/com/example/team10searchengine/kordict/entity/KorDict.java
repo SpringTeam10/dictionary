@@ -3,6 +3,7 @@ package com.example.team10searchengine.kordict.entity;
 import lombok.*;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
@@ -11,7 +12,7 @@ import javax.persistence.*;
 @Setter
 @IdClass(KorDictPrimary.class)
 @Entity(name="kor_dict")
-public class KorDict {
+public class KorDict implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
@@ -37,21 +38,6 @@ public class KorDict {
     private String proverb;
     @Column
     private String idiom;
-
     @Column
     private String classification;
-
-    public KorDict(String word, String type, String isUnique, String pronunciation, String part, String meaning, String example, String field, String proverb, String idiom, String classification) {
-        this.word = word;
-        this.type = type;
-        this.isUnique = isUnique;
-        this.pronunciation = pronunciation;
-        this.part = part;
-        this.meaning = meaning;
-        this.example = example;
-        this.field = field;
-        this.proverb = proverb;
-        this.idiom = idiom;
-        this.classification = classification;
-    }
 }

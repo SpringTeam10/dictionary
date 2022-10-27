@@ -6,7 +6,7 @@
         select *
         from kor_dict
         where word like CONCAT(#{keyword},'%')
-        limit 10
+        limit 500
     </select>
 
     <!-- FullTextIndex 설정 후 서비스단에서 정렬  -->

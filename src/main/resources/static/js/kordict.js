@@ -12,10 +12,10 @@ function execSearch() {
         traditional : true,
         url : `/search/kordict?keyword=${keyword}`,
         success: function (response) {
-                data = response['data'];
-                curScore = data[0].score;
-                getMoreDataByScore()
-                $(".more").show();
+            data = response['data'];
+            curScore = data[0].score;
+            getMoreDataByScore();
+            $(".more").show();
         }
     });
 }

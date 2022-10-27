@@ -6,8 +6,8 @@ import com.example.team10searchengine.kordict.entity.KorDictMongo;
 import com.example.team10searchengine.kordict.repository.mongorepo.KorDictMongoRepository;
 import com.example.team10searchengine.kordict.repository.mybatisrepo.KorDictMapper;
 import com.example.team10searchengine.kordict.util.korListComparator;
-import com.example.team10searchengine.shared.ResponseDto;
 import com.example.team10searchengine.shared.RankResponseDto;
+import com.example.team10searchengine.shared.ResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -37,27 +37,31 @@ public class KorDictService {
 
     @Transactional
     public ResponseEntity<?> searchKorDictNgramSort(String keyword) {
-        long info = System.currentTimeMillis();
-        updateScoreForRanking(keyword);
+        String noBlankKeyword = keyword.replace(" ", "");
+        updateScoreForRanking(noBlankKeyword);
+
+        // 한글자 검색시 Btree인덱스 사용
         if(keyword.length() == 1) {
             List<KorDict> kordict = korDictMapper.findByKeywordLike(keyword);
             return new ResponseEntity<>(ResponseDto.success(kordict), HttpStatus.OK);
         }
 
-        String noBlankKeyword = keyword.replace(" ", "");
+        // 몽고DB 확인
         KorDictMongo korDictMongoList = korDictMongoRepository.findByKeyword(noBlankKeyword);
+
+        // MongoDB에 해당 키워드가 없으면 Mysql사용 후 MongoDB에 저장
         if(korDictMongoList == null) {
             List<KorDict> korDictResponseDto = korDictMapper.findByKeywordNgramV2(keyword);
             List<KorDictSortResDto> korDictResponseDtoList = getSortedKorDictList(korDictResponseDto, keyword);
             KorDictMongo korDictMongo = new KorDictMongo(noBlankKeyword,korDictResponseDtoList, LocalDateTime.now(ZoneId.of("Asia/Seoul")));
             korDictMongoRepository.save(korDictMongo);
-            log.info("local millis : {}, keyword: {}", System.currentTimeMillis() - info, keyword);
             return new ResponseEntity<>(ResponseDto.success(korDictResponseDtoList), HttpStatus.OK);
         }
-        log.info("mongo millis : {}, keyword: {}", System.currentTimeMillis() - info, keyword);
+
         return new ResponseEntity<>(ResponseDto.success(korDictMongoList.getData()),HttpStatus.OK);
     }
 
+    // ngram으로 정렬되어진 데이터를 원하는 방향으로 재정렬 (Scoring)
     public List<KorDictSortResDto> getSortedKorDictList(List<KorDict> korDictList, String keyword) {
         List<KorDictSortResDto> korDictResponseDtoList = new ArrayList<>();
 
@@ -65,7 +69,6 @@ public class KorDictService {
         String noBlankKeyword = keyword.replace(" ", "");
         for (KorDict korDictResponseDto : korDictList) {
             String noSlashKeyword = korDictResponseDto.getWord().replace("-", "");
-
 
             int gain = keywordArr.length;
             int score = 0;
@@ -91,15 +94,13 @@ public class KorDictService {
                     .build();
             korDictResponseDtoList.add(korDictResDto);
         }
-
-
-
         korDictResponseDtoList.sort(new korListComparator());
-
 
         return korDictResponseDtoList;
     }
 
+
+    // Redis 사용하여 인기검색어 구현
     @Transactional
     public List<RankResponseDto> getKorDictRankList(){
         ZSetOperations<String, String> ZSetOperations = redisTemplate.opsForZSet();

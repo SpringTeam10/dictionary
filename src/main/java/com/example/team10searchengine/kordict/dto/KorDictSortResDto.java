@@ -13,14 +13,4 @@ public class KorDictSortResDto {
     private String example;
     private String classification;
     private int score;
-
-    public KorDictSortResDto(Long id, String word, String pronunciation, String meaning, String example, String classification, int score){
-        this.id = id;
-        this.word = word;
-        this.pronunciation = pronunciation;
-        this.meaning = meaning;
-        this.example = example;
-        this.classification = classification;
-        this.score = score;
-    }
 }
