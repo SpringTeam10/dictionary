@@ -61,6 +61,15 @@ public class WikiService {
         return new ResponseEntity<>(ResponseDto.success(wikiList), HttpStatus.OK);
     }
 
+    @Transactional
+    public ResponseEntity<?> searchWikiOne(String keyword, String category) {
+        if(category.equals("전체")) {
+            return new ResponseEntity<>(ResponseDto.success(wikiMapper.findByKeywordOne(keyword)), HttpStatus.OK);
+        }
+        return new ResponseEntity<>(ResponseDto.success(wikiMapper.findByKeywordAndCategoryOne(keyword,category)), HttpStatus.OK);
+    }
+
+
     public List<WikiSortDto> getSortedWikiList(List<WikiResDto> wikiList, String keyword){
         List<WikiSortDto> wikiSortResDtoList = new ArrayList<>();
 
