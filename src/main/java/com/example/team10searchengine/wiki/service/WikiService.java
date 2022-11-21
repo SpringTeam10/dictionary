@@ -62,15 +62,20 @@ public class WikiService {
     }
 
     public List<WikiSortDto> getSortedWikiList(List<WikiResDto> wikiList, String keyword){
-        List<WikiSortDto> wikiSortDtoList = new ArrayList<>();
+        List<WikiSortDto> wikiSortResDtoList = new ArrayList<>();
 
         String[] keywordArr = keyword.split(" ");
 
         for(WikiResDto wiki : wikiList){
-            String noBlankKeyword = wiki.getKeyword().replace(" ","");
-
             int gain = keywordArr.length;
             int score = 0;
+            String searchedKeyword = wiki.getKeyword();
+
+            if(keyword.equals(searchedKeyword)){
+                score += gain + 1;
+            }
+
+            String noBlankKeyword = searchedKeyword.replace(" ","");
 
             for(String word: keywordArr){
                 if(noBlankKeyword.contains(word)){
@@ -90,14 +95,14 @@ public class WikiService {
                         .score(score)
                         .build();
 
-                wikiSortDtoList.add(wikiSortDto);
+                wikiSortResDtoList.add(wikiSortDto);
             }
 
         }
 
-        wikiSortDtoList.sort(new ListComparator());
+        wikiSortResDtoList.sort(new ListComparator());
 
-        return wikiSortDtoList;
+        return wikiSortResDtoList;
     }
 
 
