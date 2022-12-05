@@ -22,7 +22,7 @@ public class KorDictService {
     private final KorDictMapper korDictMapper;
 
 
-    @Transactional
+    @Transactional(readOnly = true)
     public ResponseEntity<?> searchKorDictNgramSort(String keyword) {
         long init = System.currentTimeMillis();
 

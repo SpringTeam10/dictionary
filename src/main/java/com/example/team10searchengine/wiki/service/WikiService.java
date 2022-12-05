@@ -5,6 +5,7 @@ import com.example.team10searchengine.wiki.dto.WikiResDto;
 import com.example.team10searchengine.wiki.dto.WikiSortDto;
 import com.example.team10searchengine.shared.ResponseDto;
 import com.example.team10searchengine.wiki.repository.mybatisrepo.WikiMapper;
+import com.example.team10searchengine.wiki.util.wikiCategory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -22,13 +23,13 @@ public class WikiService {
 
     private final WikiMapper wikiMapper;
 
-    @Transactional
+    @Transactional(readOnly = true)
     public ResponseEntity<?> searchWikiNgramSort(String keyword, String category) {
         long init = System.currentTimeMillis();
 
         List<WikiResDto> wikiList;
 
-        if(category.equals("전체")){
+        if(category.equals(wikiCategory.total)){
             wikiList = wikiMapper.findByKeywordNgram(keyword);
         }else{
             wikiList = wikiMapper.findByKeywordAndCategoryNgram(keyword,category);
@@ -40,7 +41,7 @@ public class WikiService {
         return new ResponseEntity<>(ResponseDto.success(wikiSortDtoList), HttpStatus.OK);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public ResponseEntity<?> searchWikiLikeToken(String keyword, String category) {
         long init = System.currentTimeMillis();
 
@@ -50,7 +51,7 @@ public class WikiService {
 
         List<WikiResDto> wikiList;
 
-        if(category.equals("전체")){
+        if(category.equals(wikiCategory.total)){
             wikiList = wikiMapper.findByKeywordLike(keyword + "%");
         }else {
             wikiList = wikiMapper.findByKeywordAndCategoryLike(keyword + "%", category);
@@ -61,9 +62,9 @@ public class WikiService {
         return new ResponseEntity<>(ResponseDto.success(wikiList), HttpStatus.OK);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public ResponseEntity<?> searchWikiOne(String keyword, String category) {
-        if(category.equals("전체")) {
+        if(category.equals(wikiCategory.total)) {
             return new ResponseEntity<>(ResponseDto.success(wikiMapper.findByKeywordOne(keyword)), HttpStatus.OK);
         }
         return new ResponseEntity<>(ResponseDto.success(wikiMapper.findByKeywordAndCategoryOne(keyword,category)), HttpStatus.OK);
@@ -73,10 +74,10 @@ public class WikiService {
     public List<WikiSortDto> getSortedWikiList(List<WikiResDto> wikiList, String keyword){
         List<WikiSortDto> wikiSortResDtoList = new ArrayList<>();
 
-        String[] keywordArr = keyword.split(" ");
+        String[] keywordTokens = keyword.split(" ");
 
         for(WikiResDto wiki : wikiList){
-            int gain = keywordArr.length;
+            int gain = keywordTokens.length;
             int score = 0;
             String searchedKeyword = wiki.getKeyword();
 
@@ -86,7 +87,7 @@ public class WikiService {
 
             String noBlankKeyword = searchedKeyword.replace(" ","");
 
-            for(String word: keywordArr){
+            for(String word: keywordTokens){
                 if(noBlankKeyword.contains(word)){
                     score += gain;
                 }

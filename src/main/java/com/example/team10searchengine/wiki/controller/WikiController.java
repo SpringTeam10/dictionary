@@ -22,8 +22,8 @@ public class WikiController {
             return wikiService.searchWikiOne(keyword, category);
         }
 
-        if(Pattern.matches(".*[a-zA-Z].*",keyword)){
-            return wikiService.searchWikiLikeToken(keyword,category);
+        if(Pattern.matches(".*[a-zA-Z].*", keyword)){
+            return wikiService.searchWikiLikeToken(keyword, category);
         }
 
         return wikiService.searchWikiNgramSort(keyword, category);
