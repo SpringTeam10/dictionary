@@ -5,6 +5,7 @@ import com.example.team10searchengine.wiki.dto.WikiResDto;
 import com.example.team10searchengine.wiki.dto.WikiSortDto;
 import com.example.team10searchengine.wiki.repository.mybatisrepo.WikiMapper;
 import com.example.team10searchengine.wiki.util.WikiCategory;
+import com.example.team10searchengine.wiki.util.WikiConstant;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
@@ -28,7 +29,7 @@ public class WikiService {
 
         List<WikiResDto> wikis;
 
-        if(category.equals(WikiCategory.total)){
+        if(category.equals(WikiConstant.TOTAL)){
             wikis = wikiMapper.findByKeywordNgram(keyword);
         }else{
             wikis = wikiMapper.findByKeywordAndCategoryNgram(keyword,category);
@@ -51,7 +52,7 @@ public class WikiService {
 
         List<WikiResDto> wikis;
 
-        if(category.equals(WikiCategory.total)) {
+        if(category.equals(WikiConstant.TOTAL)) {
             wikis = wikiMapper.findByKeywordLike(keyword + "%");
             log.info("keyword={}, category={}, ms={}", keyword, category, System.currentTimeMillis() - init);
             return wikis;
@@ -68,7 +69,7 @@ public class WikiService {
 
         List<WikiResDto> wikis;
 
-        if(category.equals(WikiCategory.total)) {
+        if(category.equals(WikiConstant.TOTAL)) {
             wikis = wikiMapper.findByKeywordOne(keyword);
             log.info("keyword={}, category={}, ms={}",keyword, category, System.currentTimeMillis() - init);
             return wikis;
