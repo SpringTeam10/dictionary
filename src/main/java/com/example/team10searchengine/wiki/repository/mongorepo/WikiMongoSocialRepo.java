@@ -5,7 +5,7 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.List;
 
-public interface WikiMongoSocialRepository extends MongoRepository<WikiMongoSocial,String> {
+public interface WikiMongoSocialRepo extends MongoRepository<WikiMongoSocial,String> {
     WikiMongoSocial findByKeyword(String keyword);
     List<WikiMongoSocial> findAllByOrderByCreatedAtDesc();
     Long countBy();

@@ -5,7 +5,7 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.List;
 
-public interface WikiMongoHistoryRepository extends MongoRepository<WikiMongoHistory,String> {
+public interface WikiMongoHistoryRepo extends MongoRepository<WikiMongoHistory,String> {
     WikiMongoHistory findByKeyword(String keyword);
     List<WikiMongoHistory> findAllByOrderByCreatedAtDesc();
     Long countBy();

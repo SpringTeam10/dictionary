@@ -5,7 +5,7 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.List;
 
-public interface WikiMongoScienceRepository extends MongoRepository<WikiMongoScience,String> {
+public interface WikiMongoScienceRepo extends MongoRepository<WikiMongoScience,String> {
     WikiMongoScience findByKeyword(String keyword);
     List<WikiMongoScience> findAllByOrderByCreatedAtDesc();
     Long countBy();

@@ -1,6 +1,6 @@
 package com.example.team10searchengine.wiki.util;
 
-import com.example.team10searchengine.wiki.entity.WikiMongoAll;
+import com.example.team10searchengine.wiki.entity.WikiMongoTotal;
 import com.example.team10searchengine.wiki.repository.mongorepo.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,12 +14,12 @@ import java.util.List;
 @Component
 public class WikiScheduler {
 
-    private final WikiMongoAllRepository wikiMongoAllRepository;
-    private final WikiMongoCultureRepository wikiMongoCultureRepository;
-    private final WikiMongoEtcRepository wikiMongoEtcRepository;
-    private final WikiMongoHistoryRepository wikiMongoHistoryRepository;
-    private final WikiMongoScienceRepository wikiMongoScienceRepository;
-    private final WikiMongoSocialRepository wikiMongoSocialRepository;
+    private final WikiMongoTotalRepo wikiMongoTotalRepo;
+    private final WikiMongoCultureRepo wikiMongoCultureRepo;
+    private final WikiMongoEtcRepo wikiMongoEtcRepo;
+    private final WikiMongoHistoryRepo wikiMongoHistoryRepo;
+    private final WikiMongoScienceRepo wikiMongoScienceRepo;
+    private final WikiMongoSocialRepo wikiMongoSocialRepo;
 
 //    @Scheduled(cron = "0 0 4 * * *")
 //    public void deleteWikiAllCat() {
@@ -44,9 +44,9 @@ public class WikiScheduler {
     @Scheduled(cron = "0 0 4 * * *")
     public void deleteWikiAllCat() {
         log.info("위키 전체 검색 몽고 디비 삭제 스케쥴러");
-        List<WikiMongoAll> wikiMongoAllList = wikiMongoAllRepository.findAll();
+        List<WikiMongoTotal> wikiMongoTotalList = wikiMongoTotalRepo.findAll();
 
-        int length = wikiMongoAllList.size();
+        int length = wikiMongoTotalList.size();
 
         if(length <= 200) {
             log.info("삭제할 데이터가 없습니다.");
@@ -55,7 +55,7 @@ public class WikiScheduler {
 
         int curIndex = length - 201;
         while(curIndex >= 0){
-            wikiMongoAllRepository.deleteById(wikiMongoAllList.get(curIndex).get_id());
+            wikiMongoTotalRepo.deleteById(wikiMongoTotalList.get(curIndex).get_id());
             curIndex -= 1;
         }
 

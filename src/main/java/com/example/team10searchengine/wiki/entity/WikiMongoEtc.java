@@ -10,15 +10,15 @@ import java.util.List;
 
 @Document("wiki_etc")
 @Getter
-public class WikiMongoEtc<T> {
+public class WikiMongoEtc {
     @Id
     private String _id;
 
     private String keyword;
-    private List<T> data;
+    private List<WikiSortResDto> data;
     private LocalDateTime createdAt;
 
-    public WikiMongoEtc(String keyword, List<T> data, LocalDateTime createdAt) {
+    public WikiMongoEtc(String keyword, List<WikiSortResDto> data, LocalDateTime createdAt) {
         this.keyword = keyword;
         this.data = data;
         this.createdAt = createdAt;
