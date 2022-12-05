@@ -85,10 +85,7 @@ public class KorDictService {
             korDictResponseDtoList.add(korDictResDto);
         }
 
-
-
         korDictResponseDtoList.sort(new korListComparator());
-
 
         return korDictResponseDtoList;
     }
