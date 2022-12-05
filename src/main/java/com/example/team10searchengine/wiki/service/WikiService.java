@@ -27,18 +27,17 @@ public class WikiService {
     public ResponseEntity<?> searchWikiNgramSort(String keyword, String category) {
         long init = System.currentTimeMillis();
 
-        List<WikiResDto> wikiList;
+        List<WikiResDto> wikis;
 
         if(category.equals(WikiCategory.total)){
-            wikiList = wikiMapper.findByKeywordNgram(keyword);
+            wikis = wikiMapper.findByKeywordNgram(keyword);
         }else{
-            wikiList = wikiMapper.findByKeywordAndCategoryNgram(keyword,category);
+            wikis = wikiMapper.findByKeywordAndCategoryNgram(keyword,category);
         }
 
-        List<WikiSortDto> wikiSortDtoList = getSortedWikiList(wikiList, keyword);
-
+        List<WikiSortDto> wikiSortDtos = getSortedWikiList(wikis, keyword);
         log.info("keyword={}, category={}, ms={}", keyword, category, System.currentTimeMillis() - init);
-        return new ResponseEntity<>(ResponseDto.success(wikiSortDtoList), HttpStatus.OK);
+        return new ResponseEntity<>(ResponseDto.success(wikiSortDtos), HttpStatus.OK);
     }
 
     @Transactional(readOnly = true)
@@ -49,34 +48,43 @@ public class WikiService {
             keyword = keyword.replace(" ","%") + "%";
         }
 
-        List<WikiResDto> wikiList;
+        List<WikiResDto> wikis;
 
-        if(category.equals(WikiCategory.total)){
-            wikiList = wikiMapper.findByKeywordLike(keyword + "%");
-        }else {
-            wikiList = wikiMapper.findByKeywordAndCategoryLike(keyword + "%", category);
+        if(category.equals(WikiCategory.total)) {
+            wikis = wikiMapper.findByKeywordLike(keyword + "%");
+            log.info("keyword={}, category={}, ms={}", keyword, category, System.currentTimeMillis() - init);
+            return new ResponseEntity<>(ResponseDto.success(wikis), HttpStatus.OK);
         }
 
+        wikis = wikiMapper.findByKeywordAndCategoryLike(keyword + "%", category);
         log.info("keyword={}, category={}, ms={}",keyword, category, System.currentTimeMillis() - init);
-
-        return new ResponseEntity<>(ResponseDto.success(wikiList), HttpStatus.OK);
+        return new ResponseEntity<>(ResponseDto.success(wikis), HttpStatus.OK);
     }
 
     @Transactional(readOnly = true)
     public ResponseEntity<?> searchWikiOne(String keyword, String category) {
+        long init = System.currentTimeMillis();
+
+        List<WikiResDto> wikis;
+
         if(category.equals(WikiCategory.total)) {
-            return new ResponseEntity<>(ResponseDto.success(wikiMapper.findByKeywordOne(keyword)), HttpStatus.OK);
+            wikis = wikiMapper.findByKeywordOne(keyword);
+            log.info("keyword={}, category={}, ms={}", keyword, category, System.currentTimeMillis() - init);
+            return new ResponseEntity<>(ResponseDto.success(wikis), HttpStatus.OK);
         }
-        return new ResponseEntity<>(ResponseDto.success(wikiMapper.findByKeywordAndCategoryOne(keyword,category)), HttpStatus.OK);
+
+        wikis = wikiMapper.findByKeywordAndCategoryOne(keyword,category);
+        log.info("keyword={}, category={}, ms={}", keyword, category, System.currentTimeMillis() - init);
+        return new ResponseEntity<>(ResponseDto.success(wikis), HttpStatus.OK);
     }
 
 
-    public List<WikiSortDto> getSortedWikiList(List<WikiResDto> wikiList, String keyword){
-        List<WikiSortDto> wikiSortResDtoList = new ArrayList<>();
+    public List<WikiSortDto> getSortedWikiList(List<WikiResDto> wikis, String keyword){
+        List<WikiSortDto> wikiSortDtos = new ArrayList<>();
 
         String[] keywordTokens = keyword.split(" ");
 
-        for(WikiResDto wiki : wikiList){
+        for(WikiResDto wiki : wikis){
             int gain = keywordTokens.length;
             int score = 0;
             String searchedKeyword = wiki.getKeyword();
@@ -105,14 +113,13 @@ public class WikiService {
                         .score(score)
                         .build();
 
-                wikiSortResDtoList.add(wikiSortDto);
+                wikiSortDtos.add(wikiSortDto);
             }
-
         }
 
-        wikiSortResDtoList.sort(new ListComparator());
+        wikiSortDtos.sort(new ListComparator());
 
-        return wikiSortResDtoList;
+        return wikiSortDtos;
     }
 
 
