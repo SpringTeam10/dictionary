@@ -5,7 +5,7 @@ import com.example.team10searchengine.wiki.dto.WikiResDto;
 import com.example.team10searchengine.wiki.dto.WikiSortDto;
 import com.example.team10searchengine.shared.ResponseDto;
 import com.example.team10searchengine.wiki.repository.mybatisrepo.WikiMapper;
-import com.example.team10searchengine.wiki.util.wikiCategory;
+import com.example.team10searchengine.wiki.util.WikiCategory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -29,7 +29,7 @@ public class WikiService {
 
         List<WikiResDto> wikiList;
 
-        if(category.equals(wikiCategory.total)){
+        if(category.equals(WikiCategory.total)){
             wikiList = wikiMapper.findByKeywordNgram(keyword);
         }else{
             wikiList = wikiMapper.findByKeywordAndCategoryNgram(keyword,category);
@@ -51,7 +51,7 @@ public class WikiService {
 
         List<WikiResDto> wikiList;
 
-        if(category.equals(wikiCategory.total)){
+        if(category.equals(WikiCategory.total)){
             wikiList = wikiMapper.findByKeywordLike(keyword + "%");
         }else {
             wikiList = wikiMapper.findByKeywordAndCategoryLike(keyword + "%", category);
@@ -64,7 +64,7 @@ public class WikiService {
 
     @Transactional(readOnly = true)
     public ResponseEntity<?> searchWikiOne(String keyword, String category) {
-        if(category.equals(wikiCategory.total)) {
+        if(category.equals(WikiCategory.total)) {
             return new ResponseEntity<>(ResponseDto.success(wikiMapper.findByKeywordOne(keyword)), HttpStatus.OK);
         }
         return new ResponseEntity<>(ResponseDto.success(wikiMapper.findByKeywordAndCategoryOne(keyword,category)), HttpStatus.OK);
