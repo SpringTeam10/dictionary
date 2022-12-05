@@ -4,6 +4,7 @@ import com.example.team10searchengine.wiki.util.ListComparator;
 import com.example.team10searchengine.wiki.dto.WikiResDto;
 import com.example.team10searchengine.wiki.dto.WikiSortDto;
 import com.example.team10searchengine.wiki.repository.mybatisrepo.WikiMapper;
+import com.example.team10searchengine.wiki.util.WikiCategory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
@@ -20,26 +21,26 @@ public class WikiService {
 
     private final WikiMapper wikiMapper;
 
-    @Transactional
+    @Transactional(readOnly = true)
     @Cacheable(value = "wikiCache", cacheManager = "redisCacheManager")
     public List<?> searchWikiNgramSort(String keyword, String category) {
         long init = System.currentTimeMillis();
 
-        List<WikiResDto> wikiList;
+        List<WikiResDto> wikis;
 
-        if(category.equals("전체")){
-            wikiList = wikiMapper.findByKeywordNgram(keyword);
+        if(category.equals(WikiCategory.total)){
+            wikis = wikiMapper.findByKeywordNgram(keyword);
         }else{
-            wikiList = wikiMapper.findByKeywordAndCategoryNgram(keyword,category);
+            wikis = wikiMapper.findByKeywordAndCategoryNgram(keyword,category);
         }
 
-        List<WikiSortDto> wikiSortDtoList = getSortedWikiList(wikiList, keyword);
+        List<WikiSortDto> wikiSortDtos = getSortedWikiList(wikis, keyword);
 
         log.info("keyword={}, category={}, ms={}", keyword, category, System.currentTimeMillis() - init);
-        return wikiSortDtoList;
+        return wikiSortDtos;
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     @Cacheable(value = "wikiCache", cacheManager = "redisCacheManager")
     public List<?> searchWikiLikeToken(String keyword, String category) {
         long init = System.currentTimeMillis();
@@ -48,31 +49,48 @@ public class WikiService {
             keyword = keyword.replace(" ","%") + "%";
         }
 
-        List<WikiResDto> wikiList;
+        List<WikiResDto> wikis;
 
-        if(category.equals("전체")){
-            wikiList = wikiMapper.findByKeywordLike(keyword + "%");
-        }else {
-            wikiList = wikiMapper.findByKeywordAndCategoryLike(keyword + "%", category);
+        if(category.equals(WikiCategory.total)) {
+            wikis = wikiMapper.findByKeywordLike(keyword + "%");
+            log.info("keyword={}, category={}, ms={}", keyword, category, System.currentTimeMillis() - init);
+            return wikis;
         }
 
+        wikis = wikiMapper.findByKeywordAndCategoryLike(keyword + "%", category);
         log.info("keyword={}, category={}, ms={}",keyword, category, System.currentTimeMillis() - init);
-
-        return wikiList;
+        return wikis;
     }
 
-    public List<WikiSortDto> getSortedWikiList(List<WikiResDto> wikiList, String keyword){
-        List<WikiSortDto> wikiSortDtoList = new ArrayList<>();
+    @Transactional(readOnly = true)
+    public List<?> searchWikiOne(String keyword, String category) {
+        long init = System.currentTimeMillis();
 
-        String[] keywordArr = keyword.split(" ");
+        List<WikiResDto> wikis;
 
-        for(WikiResDto wiki : wikiList){
+        if(category.equals(WikiCategory.total)) {
+            wikis = wikiMapper.findByKeywordOne(keyword);
+            log.info("keyword={}, category={}, ms={}",keyword, category, System.currentTimeMillis() - init);
+            return wikis;
+        }
+
+        wikis = wikiMapper.findByKeywordAndCategoryOne(keyword,category);
+        log.info("keyword={}, category={}, ms={}",keyword, category, System.currentTimeMillis() - init);
+        return wikis;
+    }
+
+    public List<WikiSortDto> getSortedWikiList(List<WikiResDto> wikis, String keyword){
+        List<WikiSortDto> wikiSortDtos = new ArrayList<>();
+
+        String[] keywordTokens = keyword.split(" ");
+
+        for(WikiResDto wiki : wikis){
             String noBlankKeyword = wiki.getKeyword().replace(" ","");
 
-            int gain = keywordArr.length;
+            int gain = keywordTokens.length;
             int score = 0;
 
-            for(String word: keywordArr){
+            for(String word: keywordTokens){
                 if(noBlankKeyword.contains(word)){
                     score += gain;
                 }
@@ -90,14 +108,14 @@ public class WikiService {
                         .score(score)
                         .build();
 
-                wikiSortDtoList.add(wikiSortDto);
+                wikiSortDtos.add(wikiSortDto);
             }
 
         }
 
-        wikiSortDtoList.sort(new ListComparator());
+        wikiSortDtos.sort(new ListComparator());
 
-        return wikiSortDtoList;
+        return wikiSortDtos;
     }
 
 }
