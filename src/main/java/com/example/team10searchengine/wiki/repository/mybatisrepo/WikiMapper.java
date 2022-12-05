@@ -9,6 +9,8 @@ import java.util.List;
 public interface WikiMapper {
     List<WikiResDto> findByKeywordLike(String keyword);
     List<WikiResDto> findByKeywordAndCategoryLike(String keyword, String category);
+    List<WikiResDto> findByKeywordOne(String keyword);
+    List<WikiResDto> findByKeywordAndCategoryOne(String keyword, String category);
     List<WikiResDto> findByKeywordNgram(String keyword);
     List<WikiResDto> findByKeywordAndCategoryNgram(String keyword, String category);
 }
