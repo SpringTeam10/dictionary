@@ -34,7 +34,7 @@ public class WikiService {
             wikis = wikiMapper.findByKeywordAndCategoryNgram(keyword,category);
         }
 
-        List<WikiSortDto> wikiSortDtos = getSortedWikiList(wikis, keyword);
+        List<WikiSortDto> wikiSortDtos = getSortedWikis(wikis, keyword);
 
         log.info("keyword={}, category={}, ms={}", keyword, category, System.currentTimeMillis() - init);
         return wikiSortDtos;
@@ -79,7 +79,7 @@ public class WikiService {
         return wikis;
     }
 
-    public List<WikiSortDto> getSortedWikiList(List<WikiResDto> wikis, String keyword){
+    public List<WikiSortDto> getSortedWikis(List<WikiResDto> wikis, String keyword){
         List<WikiSortDto> wikiSortDtos = new ArrayList<>();
 
         String[] keywordTokens = keyword.split(" ");
