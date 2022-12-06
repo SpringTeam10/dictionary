@@ -48,11 +48,12 @@ tbody:last-child tr:last-child td:last-child {
     width : 400px;
 }
 .form-select {
-    margin-bottom : 30px;
-    margin-left : 545px;
-
+    position : relative;
+    display : block; margin-bottom : 5%;
+    margin-left : 66%;
+    margin-top : -2.8%;
     width : 100px;
-
+    border-radius : 5px;
 }
 #header {
     text-align: center;
@@ -94,4 +95,32 @@ tbody:last-child tr:last-child td:last-child {
     display : none;
     background : none;
 
+}
+.container-fluid {
+    position : relative;
+    margin-left : 35%;
+    margin-top : -2.5%;
+    padding-bottom : 20px;
+}
+.korcontainer-fluid {
+    position: relative;
+    margin-left: 36%;
+    padding-bottom: 20px;
+}
+li {
+    font-size : 16px;
+    margin : 10px 10px 10px 10px;
+    list-style-type: decimal;
+
+}
+.collapse {
+    background-color : white;
+    width : 340px;
+    border-radius: 7px;
+    margin-top : 3px;
+    padding-top : 1px;
+    padding-bottom : 1px;
+}
+.fa-plus-square {
+    cursor : pointer;
 }

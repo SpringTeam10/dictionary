@@ -33,14 +33,25 @@
         <input id="input-word" class="form-control" style="margin-right: 0.5rem">
         <button class="btn btn-light" onclick="execSearch()"><i class="fa fa-search"></i></button>
     </div>
-    <select id="category" class="form-select" aria-label="Default select example">
-        <option value="전체">전체</option>
-        <option value="문화">문화</option>
-        <option value="사회인문">사회인문</option>
-        <option value="역사">역사</option>
-        <option value="과학">과학</option>
-        <option value="기타">기타</option>
-    </select>
+    <div>
+        <select id="category" class="form-select" aria-label="Default select example">
+            <option value="전체">전체</option>
+            <option value="문화">문화</option>
+            <option value="사회인문">사회인문</option>
+            <option value="역사">역사</option>
+            <option value="과학">과학</option>
+            <option value="기타">기타</option>
+        </select>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="favorite">
+        <i class="fa fa-plus-square" data-toggle="collapse" href="#collapseExample" onclick="popularSearch()" aria-expanded="false" aria-controls="collapseExample"></i>
+        <span style="margin-left:10px;">인기검색어</span>
+    </div>
+    <div class="collapse" id="collapseExample">
+    </div>
 </div>
 
 <table class="table">
@@ -50,12 +61,12 @@
         <th scope="col" style="width:25%">제목</th>
         <th scope="col" style="width:40%">내용</th>
         <th scope="col" style="width:10%">분류</th>
-
     </tr>
     </thead>
     <tbody id="tbody-box">
     </tbody>
 </table>
+
 <button type="button" class="btn btn-light more" onclick="getMoreDataByScore()">More ▽</button>
 </body>
 </html>

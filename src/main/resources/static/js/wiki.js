@@ -28,6 +28,25 @@ function execSearch() {
     });
 }
 
+function popularSearch() {
+    $("#collapseExample").empty();
+    $.ajax({
+        type: 'GET',
+        url : `/search/wiki/ranking`,
+        success: function (response) {
+            for(let i=0; i<response.length; i++) {
+                let item = response[i];
+                let tempHtml = addpopular(item);
+                $("#collapseExample").append(tempHtml);
+            }
+        }
+    });
+}
+
+function addpopular(item) {
+    return `<li> ${item.rankKeyword} </li>`
+}
+
 function getMoreDataByScore(){
     while(1){
         let item = data[curOrder];

@@ -1,4 +1,5 @@
 package com.example.team10searchengine.wiki.controller;
+import com.example.team10searchengine.shared.RankResponseDto;
 import com.example.team10searchengine.wiki.service.WikiService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,6 +27,11 @@ public class WikiController {
         }
 
         return wikiService.searchWikiNgramSort(keyword, category);
+    }
+
+    @GetMapping("/search/wiki/ranking")
+    public List<RankResponseDto> getWikiRankList() {
+        return wikiService.getWikiRankList();
     }
 
 }
