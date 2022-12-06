@@ -109,12 +109,6 @@ public class KorDictService {
     }
 
     public void updateScoreForRanking(String keyword){
-        double score = 0.0;
-        try {
-            redisTemplate.opsForZSet().incrementScore("korranking", keyword,1);
-        } catch (Exception e) {
-            log.info(e.toString());
-        }
-        redisTemplate.opsForZSet().incrementScore("korranking", keyword, score);
+        redisTemplate.opsForZSet().incrementScore("korranking", keyword, 1);
     }
 }
