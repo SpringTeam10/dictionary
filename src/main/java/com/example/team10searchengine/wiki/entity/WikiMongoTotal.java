@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
-@Document("wiki_all")
+@Document("wiki_total")
 @Getter
 public class WikiMongoTotal {
     @Id
