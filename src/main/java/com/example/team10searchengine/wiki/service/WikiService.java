@@ -34,7 +34,7 @@ public class WikiService {
     private final WikiMongoSocialRepo wikiMongoSocialRepo;
 
 
-    @Transactional(readOnly = true)
+    @Transactional
     public ResponseEntity<?> searchWikiNgramSort(String keyword, String category) {
         long init = System.currentTimeMillis();
 
@@ -140,7 +140,7 @@ public class WikiService {
         return new ResponseEntity<>(ResponseDto.fail("404 Not Found","Category Doesn't Exist"), HttpStatus.NOT_FOUND);
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public ResponseEntity<?> searchWikiLikeToken(String keyword, String category) {
         long init = System.currentTimeMillis();
 
