@@ -46,7 +46,7 @@ public class WikiService {
         long init = System.currentTimeMillis();
 
         if(keyword.contains(" ")){
-            keyword = keyword.replace(" ","%") + "%";
+            keyword = keyword.replace(" ","%");
         }
 
         List<WikiResDto> wikis;
