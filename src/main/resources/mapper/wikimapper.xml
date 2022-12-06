@@ -2,15 +2,15 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.team10searchengine.wiki.repository.mybatisrepo.WikiMapper">
     <!-- B-Tree like 패턴 이용 keyword search  -->
-    <select id="findByKeywordLike" resultType="com.example.team10searchengine.wiki.dto.WikiResDto">
-        select w.id, w.keyword, w.contents, w.img_url, w.detail_url, w.classification
+    <select id="findByKeywordLike" resultType="com.example.team10searchengine.wiki.dto.WikiSortResDto">
+        select w.id, w.keyword, w.contents, w.img_url, w.detail_url, w.classification, @score:=0 as score
         from wiki w
         where w.keyword like #{keyword} limit 500
     </select>
 
     <!-- B-Tree like 패턴 이용 keyword, category search  -->
-    <select id="findByKeywordAndCategoryLike" resultType="com.example.team10searchengine.wiki.dto.WikiResDto">
-        select w.id, w.keyword, w.contents, w.img_url, w.detail_url, w.classification
+    <select id="findByKeywordAndCategoryLike" resultType="com.example.team10searchengine.wiki.dto.WikiSortResDto">
+        select w.id, w.keyword, w.contents, w.img_url, w.detail_url, w.classification, @score:=0 as score
         from wiki w
         where w.keyword like #{keyword} and w.category=#{category} limit 100
     </select>
@@ -46,7 +46,7 @@
         where
             match (w.keyword)
             against (#{keyword} in natural language mode)
-            and w.category = #{category}
+          and w.category = #{category}
             limit 100
     </select>
 

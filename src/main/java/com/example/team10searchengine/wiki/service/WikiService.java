@@ -2,12 +2,14 @@ package com.example.team10searchengine.wiki.service;
 
 import com.example.team10searchengine.shared.ResponseDto;
 import com.example.team10searchengine.shared.RankResponseDto;
+import com.example.team10searchengine.wiki.constant.FailMsg;
 import com.example.team10searchengine.wiki.dto.WikiResDto;
 import com.example.team10searchengine.wiki.dto.WikiSortResDto;
 import com.example.team10searchengine.wiki.entity.*;
 import com.example.team10searchengine.wiki.repository.mongorepo.*;
 import com.example.team10searchengine.wiki.repository.mybatisrepo.WikiMapper;
 import com.example.team10searchengine.wiki.util.ListComparator;
+import com.example.team10searchengine.wiki.constant.WikiConstant;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -30,12 +32,12 @@ import java.util.stream.Collectors;
 public class WikiService {
 
     private final WikiMapper wikiMapper;
-    private final WikiMongoAllRepository wikiMongoAllRepository;
-    private final WikiMongoCultureRepository wikiMongoCultureRepository;
-    private final WikiMongoEtcRepository wikiMongoEtcRepository;
-    private final WikiMongoHistoryRepository wikiMongoHistoryRepository;
-    private final WikiMongoScienceRepository wikiMongoScienceRepository;
-    private final WikiMongoSocialRepository wikiMongoSocialRepository;
+    private final WikiMongoTotalRepo wikiMongoTotalRepo;
+    private final WikiMongoCultureRepo wikiMongoCultureRepo;
+    private final WikiMongoEtcRepo wikiMongoEtcRepo;
+    private final WikiMongoHistoryRepo wikiMongoHistoryRepo;
+    private final WikiMongoScienceRepo wikiMongoScienceRepo;
+    private final WikiMongoSocialRepo wikiMongoSocialRepo;
     private final RedisTemplate<String, String> redisTemplate;
 
 
@@ -43,80 +45,92 @@ public class WikiService {
     public ResponseEntity<?> searchWikiNgramSort(String keyword, String category) {
         updateScoreForRanking(keyword);
 
-        if (category.equals("전체")){
-            WikiMongoAll wikiMongoAll = wikiMongoAllRepository.findByKeyword(keyword);
-            if(wikiMongoAll == null){
-                List<WikiResDto> wikiList = wikiMapper.findByKeywordNgram(keyword);
-                List<WikiSortResDto> wikiSortResDtoList = getSortedWikiList(wikiList, keyword);
-                WikiMongoAll saveWikiMongoAll = new WikiMongoAll(keyword,wikiSortResDtoList, LocalDateTime.now(ZoneId.of("Asia/Seoul")));
-                wikiMongoAllRepository.save(saveWikiMongoAll);
-                return new ResponseEntity<>(ResponseDto.success(wikiSortResDtoList), HttpStatus.OK);
+        if (category.equals(WikiConstant.TOTAL)){
+            WikiMongoTotal wikiMongoTotal = wikiMongoTotalRepo.findByKeyword(keyword);
+
+            if(wikiMongoTotal == null){
+                List<WikiResDto> wikis = wikiMapper.findByKeywordNgram(keyword);
+                List<WikiSortResDto> wikiSortResDtos = getSortedWikiList(wikis, keyword);
+                WikiMongoTotal saveWikiMongoTotal = new WikiMongoTotal(keyword, wikiSortResDtos, LocalDateTime.now(ZoneId.of(WikiConstant.TIME_ZONE)));
+                wikiMongoTotalRepo.save(saveWikiMongoTotal);
+                return new ResponseEntity<>(ResponseDto.success(wikiSortResDtos), HttpStatus.OK);
             }
-            return new ResponseEntity<>(ResponseDto.success(wikiMongoAll.getData()), HttpStatus.OK);
+
+            return new ResponseEntity<>(ResponseDto.success(wikiMongoTotal.getData()), HttpStatus.OK);
         }
 
-        if(category.equals("사회인문")){
-            WikiMongoSocial wikiMongoSocial = wikiMongoSocialRepository.findByKeyword(keyword);
+        if(category.equals(WikiConstant.SOCIAL)){
+            WikiMongoSocial wikiMongoSocial = wikiMongoSocialRepo.findByKeyword(keyword);
+
             if(wikiMongoSocial == null){
-                List<WikiResDto> wikiList = wikiMapper.findByKeywordAndCategoryNgram(keyword,category);
-                List<WikiSortResDto> wikiSortResDtoList = getSortedWikiList(wikiList, keyword);
-                WikiMongoSocial saveWikiMongoSocial = new WikiMongoSocial(keyword,wikiSortResDtoList, LocalDateTime.now(ZoneId.of("Asia/Seoul")));
-                wikiMongoSocialRepository.save(saveWikiMongoSocial);
-                return new ResponseEntity<>(ResponseDto.success(wikiSortResDtoList), HttpStatus.OK);
+                List<WikiResDto> wikis = wikiMapper.findByKeywordAndCategoryNgram(keyword, category);
+                List<WikiSortResDto> wikiSortResDtos = getSortedWikiList(wikis, keyword);
+                WikiMongoSocial saveWikiMongoSocial = new WikiMongoSocial(keyword, wikiSortResDtos, LocalDateTime.now(ZoneId.of(WikiConstant.TIME_ZONE)));
+                wikiMongoSocialRepo.save(saveWikiMongoSocial);
+                return new ResponseEntity<>(ResponseDto.success(wikiSortResDtos), HttpStatus.OK);
             }
+
             return new ResponseEntity<>(ResponseDto.success(wikiMongoSocial.getData()), HttpStatus.OK);
         }
         
 
-        if(category.equals("기타")){
-            WikiMongoEtc wikiMongoEtc = wikiMongoEtcRepository.findByKeyword(keyword);
+        if(category.equals(WikiConstant.ETC)){
+            WikiMongoEtc wikiMongoEtc = wikiMongoEtcRepo.findByKeyword(keyword);
+
             if(wikiMongoEtc == null){
-                List<WikiResDto> wikiList = wikiMapper.findByKeywordAndCategoryNgram(keyword,category);
-                List<WikiSortResDto> wikiSortResDtoList = getSortedWikiList(wikiList, keyword);
-                WikiMongoEtc saveWikiMongoEtc = new WikiMongoEtc(keyword,wikiSortResDtoList, LocalDateTime.now(ZoneId.of("Asia/Seoul")));
-                wikiMongoEtcRepository.save(saveWikiMongoEtc);
-                return new ResponseEntity<>(ResponseDto.success(wikiSortResDtoList), HttpStatus.OK);
+                List<WikiResDto> wikis = wikiMapper.findByKeywordAndCategoryNgram(keyword, category);
+                List<WikiSortResDto> wikiSortResDtos = getSortedWikiList(wikis, keyword);
+                WikiMongoEtc saveWikiMongoEtc = new WikiMongoEtc(keyword, wikiSortResDtos, LocalDateTime.now(ZoneId.of(WikiConstant.TIME_ZONE)));
+                wikiMongoEtcRepo.save(saveWikiMongoEtc);
+                return new ResponseEntity<>(ResponseDto.success(wikiSortResDtos), HttpStatus.OK);
             }
+
             return new ResponseEntity<>(ResponseDto.success(wikiMongoEtc.getData()), HttpStatus.OK);
         }
 
-        if(category.equals("문화")){
-            WikiMongoCulture wikiMongoCulture = wikiMongoCultureRepository.findByKeyword(keyword);
+        if(category.equals(WikiConstant.CULTURE)){
+            WikiMongoCulture wikiMongoCulture = wikiMongoCultureRepo.findByKeyword(keyword);
+
             if(wikiMongoCulture == null){
-                List<WikiResDto> wikiList = wikiMapper.findByKeywordAndCategoryNgram(keyword,category);
-                List<WikiSortResDto> wikiSortResDtoList = getSortedWikiList(wikiList, keyword);
-                WikiMongoCulture saveWikiMongoCulture = new WikiMongoCulture(keyword,wikiSortResDtoList, LocalDateTime.now(ZoneId.of("Asia/Seoul")));
-                wikiMongoCultureRepository.save(saveWikiMongoCulture);
-                return new ResponseEntity<>(ResponseDto.success(wikiSortResDtoList), HttpStatus.OK);
+                List<WikiResDto> wikis = wikiMapper.findByKeywordAndCategoryNgram(keyword, category);
+                List<WikiSortResDto> wikiSortResDtos = getSortedWikiList(wikis, keyword);
+                WikiMongoCulture saveWikiMongoCulture = new WikiMongoCulture(keyword, wikiSortResDtos, LocalDateTime.now(ZoneId.of(WikiConstant.TIME_ZONE)));
+                wikiMongoCultureRepo.save(saveWikiMongoCulture);
+                return new ResponseEntity<>(ResponseDto.success(wikiSortResDtos), HttpStatus.OK);
             }
+
             return new ResponseEntity<>(ResponseDto.success(wikiMongoCulture.getData()), HttpStatus.OK);
         }
 
-        if(category.equals("역사")){
-            WikiMongoHistory wikiMongoHistory = wikiMongoHistoryRepository.findByKeyword(keyword);
+        if(category.equals(WikiConstant.HISTORY)){
+            WikiMongoHistory wikiMongoHistory = wikiMongoHistoryRepo.findByKeyword(keyword);
+
             if(wikiMongoHistory == null){
-                List<WikiResDto> wikiList = wikiMapper.findByKeywordAndCategoryNgram(keyword,category);
-                List<WikiSortResDto> wikiSortResDtoList = getSortedWikiList(wikiList, keyword);
-                WikiMongoHistory saveWikiMongoHistory = new WikiMongoHistory(keyword,wikiSortResDtoList, LocalDateTime.now(ZoneId.of("Asia/Seoul")));
-                wikiMongoHistoryRepository.save(saveWikiMongoHistory);
-                return new ResponseEntity<>(ResponseDto.success(wikiSortResDtoList), HttpStatus.OK);
+                List<WikiResDto> wikis = wikiMapper.findByKeywordAndCategoryNgram(keyword, category);
+                List<WikiSortResDto> wikiSortResDtos = getSortedWikiList(wikis, keyword);
+                WikiMongoHistory saveWikiMongoHistory = new WikiMongoHistory(keyword, wikiSortResDtos, LocalDateTime.now(ZoneId.of(WikiConstant.TIME_ZONE)));
+                wikiMongoHistoryRepo.save(saveWikiMongoHistory);
+                return new ResponseEntity<>(ResponseDto.success(wikiSortResDtos), HttpStatus.OK);
             }
+
             return new ResponseEntity<>(ResponseDto.success(wikiMongoHistory.getData()), HttpStatus.OK);
         }
 
-        if(category.equals("과학")){
-            WikiMongoScience wikiMongoScience = wikiMongoScienceRepository.findByKeyword(keyword);
+        if(category.equals(WikiConstant.SCIENCE)){
+            WikiMongoScience wikiMongoScience = wikiMongoScienceRepo.findByKeyword(keyword);
+
             if(wikiMongoScience == null){
-                List<WikiResDto> wikiList = wikiMapper.findByKeywordAndCategoryNgram(keyword,category);
-                List<WikiSortResDto> wikiSortResDtoList = getSortedWikiList(wikiList, keyword);
-                WikiMongoScience saveWikiMongoScience = new WikiMongoScience(keyword,wikiSortResDtoList, LocalDateTime.now(ZoneId.of("Asia/Seoul")));
-                wikiMongoScienceRepository.save(saveWikiMongoScience);
-                return new ResponseEntity<>(ResponseDto.success(wikiSortResDtoList), HttpStatus.OK);
+                List<WikiResDto> wikis = wikiMapper.findByKeywordAndCategoryNgram(keyword,category);
+                List<WikiSortResDto> wikiSortResDtos = getSortedWikiList(wikis, keyword);
+                WikiMongoScience saveWikiMongoScience = new WikiMongoScience(keyword,wikiSortResDtos, LocalDateTime.now(ZoneId.of(WikiConstant.TIME_ZONE)));
+                wikiMongoScienceRepo.save(saveWikiMongoScience);
+                return new ResponseEntity<>(ResponseDto.success(wikiSortResDtos), HttpStatus.OK);
             }
+
             return new ResponseEntity<>(ResponseDto.success(wikiMongoScience.getData()), HttpStatus.OK);
         }
 
-        return new ResponseEntity<>(ResponseDto.fail("404 Not Found","Category Doesn't Exist"), HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(ResponseDto.fail(FailMsg.NOT_FOUND_CODE, FailMsg.CATEGORY_NOT_FOUND_MSG), HttpStatus.NOT_FOUND);
     }
 
     @Transactional
@@ -128,80 +142,91 @@ public class WikiService {
             keyword = keyword.replace(" ","%");
         }
 
-        if (category.equals("전체")){
-            WikiMongoAll wikiMongoAll = wikiMongoAllRepository.findByKeyword(init_keyword);
-            if(wikiMongoAll == null){
-                List<WikiResDto> wikiList = wikiMapper.findByKeywordLike(keyword + "%");
-                WikiMongoAll saveWikiMongoAll = new WikiMongoAll(init_keyword,wikiList, LocalDateTime.now(ZoneId.of("Asia/Seoul")));
-                wikiMongoAllRepository.save(saveWikiMongoAll);
-                return new ResponseEntity<>(ResponseDto.success(wikiList), HttpStatus.OK);
+        if (category.equals(WikiConstant.TOTAL)){
+            WikiMongoTotal wikiMongoTotal = wikiMongoTotalRepo.findByKeyword(init_keyword);
+
+            if(wikiMongoTotal == null){
+                List<WikiSortResDto> wikis = wikiMapper.findByKeywordLike(keyword + "%");
+                WikiMongoTotal saveWikiMongoTotal = new WikiMongoTotal(init_keyword, wikis, LocalDateTime.now(ZoneId.of(WikiConstant.TIME_ZONE)));
+                wikiMongoTotalRepo.save(saveWikiMongoTotal);
+                return new ResponseEntity<>(ResponseDto.success(wikis), HttpStatus.OK);
             }
-            return new ResponseEntity<>(ResponseDto.success(wikiMongoAll.getData()), HttpStatus.OK);
+            return new ResponseEntity<>(ResponseDto.success(wikiMongoTotal.getData()), HttpStatus.OK);
         }
 
-        if(category.equals("사회인문")){
-            WikiMongoSocial wikiMongoSocial = wikiMongoSocialRepository.findByKeyword(init_keyword);
+        if(category.equals(WikiConstant.SOCIAL)){
+            WikiMongoSocial wikiMongoSocial = wikiMongoSocialRepo.findByKeyword(init_keyword);
+
             if(wikiMongoSocial == null){
-                List<WikiResDto> wikiList = wikiMapper.findByKeywordAndCategoryLike(keyword + "%", category);
-                WikiMongoSocial saveWikiMongoSocial = new WikiMongoSocial(init_keyword,wikiList, LocalDateTime.now(ZoneId.of("Asia/Seoul")));
-                wikiMongoSocialRepository.save(saveWikiMongoSocial);
-                return new ResponseEntity<>(ResponseDto.success(wikiList), HttpStatus.OK);
+                List<WikiSortResDto> wikis = wikiMapper.findByKeywordAndCategoryLike(keyword + "%", category);
+                WikiMongoSocial saveWikiMongoSocial = new WikiMongoSocial(init_keyword, wikis, LocalDateTime.now(ZoneId.of(WikiConstant.TIME_ZONE)));
+                wikiMongoSocialRepo.save(saveWikiMongoSocial);
+                return new ResponseEntity<>(ResponseDto.success(wikis), HttpStatus.OK);
             }
+
             return new ResponseEntity<>(ResponseDto.success(wikiMongoSocial.getData()), HttpStatus.OK);
         }
 
 
-        if(category.equals("기타")){
-            WikiMongoEtc wikiMongoEtc = wikiMongoEtcRepository.findByKeyword(init_keyword);
+        if(category.equals(WikiConstant.ETC)){
+            WikiMongoEtc wikiMongoEtc = wikiMongoEtcRepo.findByKeyword(init_keyword);
+
             if(wikiMongoEtc == null){
-                List<WikiResDto> wikiList = wikiMapper.findByKeywordAndCategoryLike(keyword + "%", category);
-                WikiMongoEtc saveWikiMongoEtc = new WikiMongoEtc(init_keyword,wikiList, LocalDateTime.now(ZoneId.of("Asia/Seoul")));
-                wikiMongoEtcRepository.save(saveWikiMongoEtc);
-                return new ResponseEntity<>(ResponseDto.success(wikiList), HttpStatus.OK);
+                List<WikiSortResDto> wikis = wikiMapper.findByKeywordAndCategoryLike(keyword + "%", category);
+                WikiMongoEtc saveWikiMongoEtc = new WikiMongoEtc(init_keyword, wikis, LocalDateTime.now(ZoneId.of(WikiConstant.TIME_ZONE)));
+                wikiMongoEtcRepo.save(saveWikiMongoEtc);
+                return new ResponseEntity<>(ResponseDto.success(wikis), HttpStatus.OK);
             }
+
             return new ResponseEntity<>(ResponseDto.success(wikiMongoEtc.getData()), HttpStatus.OK);
         }
 
-        if(category.equals("문화")){
-            WikiMongoCulture wikiMongoCulture = wikiMongoCultureRepository.findByKeyword(init_keyword);
+        if(category.equals(WikiConstant.CULTURE)){
+            WikiMongoCulture wikiMongoCulture = wikiMongoCultureRepo.findByKeyword(init_keyword);
+
             if(wikiMongoCulture == null){
-                List<WikiResDto> wikiList = wikiMapper.findByKeywordAndCategoryLike(keyword + "%", category);
-                WikiMongoCulture saveWikiMongoCulture = new WikiMongoCulture(init_keyword,wikiList, LocalDateTime.now(ZoneId.of("Asia/Seoul")));
-                wikiMongoCultureRepository.save(saveWikiMongoCulture);
-                return new ResponseEntity<>(ResponseDto.success(wikiList), HttpStatus.OK);
+                List<WikiSortResDto> wikis = wikiMapper.findByKeywordAndCategoryLike(keyword + "%", category);
+                WikiMongoCulture saveWikiMongoCulture = new WikiMongoCulture(init_keyword, wikis, LocalDateTime.now(ZoneId.of(WikiConstant.TIME_ZONE)));
+                wikiMongoCultureRepo.save(saveWikiMongoCulture);
+                return new ResponseEntity<>(ResponseDto.success(wikis), HttpStatus.OK);
             }
+
             return new ResponseEntity<>(ResponseDto.success(wikiMongoCulture.getData()), HttpStatus.OK);
         }
 
-        if(category.equals("역사")){
-            WikiMongoHistory wikiMongoHistory = wikiMongoHistoryRepository.findByKeyword(init_keyword);
+        if(category.equals(WikiConstant.HISTORY)){
+            WikiMongoHistory wikiMongoHistory = wikiMongoHistoryRepo.findByKeyword(init_keyword);
+
             if(wikiMongoHistory == null){
-                List<WikiResDto> wikiList = wikiMapper.findByKeywordAndCategoryLike(keyword + "%", category);
-                WikiMongoHistory saveWikiMongoHistory = new WikiMongoHistory(init_keyword,wikiList, LocalDateTime.now(ZoneId.of("Asia/Seoul")));
-                wikiMongoHistoryRepository.save(saveWikiMongoHistory);
-                return new ResponseEntity<>(ResponseDto.success(wikiList), HttpStatus.OK);
+                List<WikiSortResDto> wikis = wikiMapper.findByKeywordAndCategoryLike(keyword + "%", category);
+                WikiMongoHistory saveWikiMongoHistory = new WikiMongoHistory(init_keyword, wikis, LocalDateTime.now(ZoneId.of(WikiConstant.TIME_ZONE)));
+                wikiMongoHistoryRepo.save(saveWikiMongoHistory);
+                return new ResponseEntity<>(ResponseDto.success(wikis), HttpStatus.OK);
             }
+
             return new ResponseEntity<>(ResponseDto.success(wikiMongoHistory.getData()), HttpStatus.OK);
         }
 
-        if(category.equals("과학")){
-            WikiMongoScience wikiMongoScience = wikiMongoScienceRepository.findByKeyword(init_keyword);
+        if(category.equals(WikiConstant.SCIENCE)){
+            WikiMongoScience wikiMongoScience = wikiMongoScienceRepo.findByKeyword(init_keyword);
+
             if(wikiMongoScience == null){
-                List<WikiResDto> wikiList = wikiMapper.findByKeywordAndCategoryLike(keyword + "%", category);
-                WikiMongoScience saveWikiMongoScience = new WikiMongoScience(init_keyword,wikiList, LocalDateTime.now(ZoneId.of("Asia/Seoul")));
-                wikiMongoScienceRepository.save(saveWikiMongoScience);
-                return new ResponseEntity<>(ResponseDto.success(wikiList), HttpStatus.OK);
+                List<WikiSortResDto> wikis = wikiMapper.findByKeywordAndCategoryLike(keyword + "%", category);
+                WikiMongoScience saveWikiMongoScience = new WikiMongoScience(init_keyword,wikis, LocalDateTime.now(ZoneId.of(WikiConstant.TIME_ZONE)));
+                wikiMongoScienceRepo.save(saveWikiMongoScience);
+                return new ResponseEntity<>(ResponseDto.success(wikis), HttpStatus.OK);
             }
+
             return new ResponseEntity<>(ResponseDto.success(wikiMongoScience.getData()), HttpStatus.OK);
         }
 
-        return new ResponseEntity<>(ResponseDto.fail("404 Not Found","Category Doesn't Exist"), HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(ResponseDto.fail(FailMsg.NOT_FOUND_CODE, FailMsg.CATEGORY_NOT_FOUND_MSG), HttpStatus.NOT_FOUND);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public ResponseEntity<?> searchWikiOne(String keyword, String category) {
         updateScoreForRanking(keyword);
-        if(category.equals("전체")) {
+        if(category.equals(WikiConstant.TOTAL)) {
             return new ResponseEntity<>(ResponseDto.success(wikiMapper.findByKeywordOne(keyword)), HttpStatus.OK);
         }
         return new ResponseEntity<>(ResponseDto.success(wikiMapper.findByKeywordAndCategoryOne(keyword,category)), HttpStatus.OK);
@@ -210,26 +235,20 @@ public class WikiService {
     @Transactional
     public List<RankResponseDto> getWikiRankList(){
         ZSetOperations<String, String> ZSetOperations = redisTemplate.opsForZSet();
-        Set<ZSetOperations.TypedTuple<String>> typedTuples = ZSetOperations.reverseRangeWithScores("ranking", 0, 9);
+        Set<ZSetOperations.TypedTuple<String>> typedTuples = ZSetOperations.reverseRangeWithScores(WikiConstant.RANKING_KEY, WikiConstant.RANKING_START, WikiConstant.RANKING_END);
         return typedTuples.stream().map(RankResponseDto::convertToRankResponseDto).collect(Collectors.toList());
     }
 
     public void updateScoreForRanking(String keyword){
-        double score = 0.0;
-        try {
-            redisTemplate.opsForZSet().incrementScore("ranking", keyword,1);
-        } catch (Exception e) {
-            log.info(e.toString());
-        }
-        redisTemplate.opsForZSet().incrementScore("ranking", keyword, score);
+        redisTemplate.opsForZSet().incrementScore(WikiConstant.RANKING_KEY, keyword,1);
     }
 
-    public List<WikiSortResDto> getSortedWikiList(List<WikiResDto> wikiList, String keyword){
-        List<WikiSortResDto> wikiSortResDtoList = new ArrayList<>();
+    public List<WikiSortResDto> getSortedWikiList(List<WikiResDto> wikis, String keyword){
+        List<WikiSortResDto> wikiSortResDtos = new ArrayList<>();
 
         String[] keywordArr = keyword.split(" ");
 
-        for(WikiResDto wiki : wikiList){
+        for(WikiResDto wiki : wikis){
             int gain = keywordArr.length;
             int score = 0;
             String searchedKeyword = wiki.getKeyword();
@@ -258,14 +277,14 @@ public class WikiService {
                         .score(score)
                         .build();
 
-                wikiSortResDtoList.add(wikiSortResDto);
+                wikiSortResDtos.add(wikiSortResDto);
             }
 
         }
 
-        wikiSortResDtoList.sort(new ListComparator());
+        wikiSortResDtos.sort(new ListComparator());
 
-        return wikiSortResDtoList;
+        return wikiSortResDtos;
     }
 
 }
