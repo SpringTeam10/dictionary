@@ -27,7 +27,7 @@ public class WikiService {
     private final WikiMapper wikiMapper;
     private final RedisTemplate<String, String> redisTemplate;
 
-    @Transactional(readOnly = true)
+    @Transactional
     @Cacheable(value = "wikiCache", cacheManager = "redisCacheManager")
     public List<?> searchWikiNgramSort(String keyword, String category) {
         long init = System.currentTimeMillis();
@@ -47,7 +47,7 @@ public class WikiService {
         return wikiSortDtos;
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     @Cacheable(value = "wikiCache", cacheManager = "redisCacheManager")
     public List<?> searchWikiLikeToken(String keyword, String category) {
         long init = System.currentTimeMillis();
@@ -70,7 +70,7 @@ public class WikiService {
         return wikis;
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public List<?> searchWikiOne(String keyword, String category) {
         long init = System.currentTimeMillis();
         updateScoreForRanking(keyword);
