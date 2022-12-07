@@ -1,7 +1,6 @@
 package com.example.team10searchengine.configuration.redis;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cache.annotation.CachingConfigurerSupport;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -13,7 +12,7 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 @Configuration
 @EnableRedisRepositories
-public class RedisConfiguration extends CachingConfigurerSupport {
+public class RedisConfiguration {
 
     @Value("${spring.redis.port}")
     private int port;
